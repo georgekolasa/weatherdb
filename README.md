@@ -12,7 +12,7 @@ Be sure to create your own fork of this repository, utilize the separation of ma
 4. you can now update your fork with changes merged to this repository! Here's a simple example:
 
 ```bash
-git commit -m "i did some work, here's my meaning commit message"
+git commit -m "i did some work, here's my meaningful commit message"
 git pull upstream <CURRENT_BRANCH>
 
 # uh oh, conflicts... 
