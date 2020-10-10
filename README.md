@@ -2,9 +2,31 @@
 
 A React application for interacting with NOAA weather data
 
+## Contributing
+
+Be sure to create your own fork of this repository, utilize the separation of major features into individual branches, and create Pull Requests when major features have been implement. Before creating a pull request, or continuing from your last coding session, be sure to pull any changes from the upstream. If you are unsure of what this would look like to get set up, here is a quick guide:
+
+1. fork this repository using the button underneath your profile picture
+2. clone your fork to your machine locally
+3. navigate to the clones root directory and add the upstream reference to this repository using the following command: `git remote add upstream https://github.com/weatherdb/weatherdb.git`
+4. you can now update your fork with changes merged to this repository! Here's a simple example:
+
+```bash
+git commit -m "i did some work, here's my meaning commit message"
+git pull upstream <CURRENT_BRANCH>
+
+# uh oh, conflicts... 
+# few min later, conflicts resolved
+
+git commit -m "fixed conflicts from updating branch"
+git push origin <CURRENT_BRANCH>
+
+# after the feature is complete, toss a PR over to this repo
+```
+
 ## Installation
 
-Ensure [nodejs](https://nodejs.org/en/), [npm](https://www.npmjs.com/get-npm) and [yarn](https://classic.yarnpkg.com/en/docs/install/) are properly installed and configured. Clone the repository, and run the following commands:
+Ensure [nodejs](https://nodejs.org/en/), [npm](https://www.npmjs.com/get-npm) and [yarn](https://classic.yarnpkg.com/en/docs/install/) are properly installed and configured. Clone the forked repository, and run the following commands:
 
 ```bash
 cd weatherdb
