@@ -1,8 +1,6 @@
 {
   "name": "semester_project",
   "version": "0.1.0",
-  "private": true,
-  "dependencies": {},
   "scripts": {
     "dev:frontend": "cd frontend && yarn dev",
     "dev:backend": "cd backend && yarn dev",
