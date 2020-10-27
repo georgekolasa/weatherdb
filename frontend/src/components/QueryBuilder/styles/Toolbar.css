@@ -1,0 +1,17 @@
+.toolbar-layout {
+  width: 100%;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  background-color: #fff;
+  border-radius: 0.125rem;
+  padding: 0.5rem;
+
+  margin-bottom: 1rem;
+
+  display: flex;
+  justify-content: center;
+}
+
+.toolbar-btn {
+  margin-left: 2rem;
+  margin-right: 2rem;
+}

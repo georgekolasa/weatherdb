@@ -1,0 +1,13 @@
+.query-builder-layout {
+  height: calc(100vh - 3rem);
+  display: flex;
+  background-color: #f7fafc;
+}
+
+.query-builder-central-layout {
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  width: 70vw;
+  margin: 0 auto;
+}
