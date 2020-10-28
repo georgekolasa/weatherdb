@@ -4,7 +4,7 @@ import Header from '../../components/Header/Header';
 import QueryBuilder from './QueryBuilder';
 import QueryResults from './QueryResults';
 
-export default function index() {
+export default function () {
   return (
     <React.Fragment>
       <Header />

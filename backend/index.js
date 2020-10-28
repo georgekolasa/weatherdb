@@ -19,6 +19,18 @@ async function bootstrap() {
 
   // EXAMPLE WITH MIDDLEWARE
   // app.get('/pingme', validateQuery, pingme);
+
+  if (process.env.NODE_ENV === 'production') {
+    const root = require('path').join(__dirname, '..', 'frontend', 'build');
+    app.use(express.static(root));
+    app.get('*', (req, res) => {
+      res.sendFile('index.html', { root });
+    });
+  }
+
+  // app.get('*', (req, res) => {
+  //   res.sendFile(path.join(__dirname, '..', 'frontend/build/index.html'));
+  // });
 }
 
 bootstrap();

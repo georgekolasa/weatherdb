@@ -5,7 +5,9 @@
     "dev:frontend": "cd frontend && yarn dev",
     "dev:backend": "cd backend && yarn dev",
     "dev": "concurrently \"yarn dev:backend\" \"yarn dev:frontend\"",
-    "install:all": "concurrently \"cd backend && yarn\" \"cd frontend && yarn\""
+    "install:all": "concurrently \"cd backend && yarn\" \"cd frontend && yarn\"",
+    "build": "cd frontend && yarn build",
+    "serve": "cd backend && NODE_ENV=production node index.js"
   },
   "eslintConfig": {
     "extends": "react-app"
