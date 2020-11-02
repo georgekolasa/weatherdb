@@ -26,5 +26,9 @@
   },
   "devDependencies": {
     "concurrently": "^5.3.0"
+  },
+  "dependencies": {
+    "react-lazy-hero": "^2.0.0",
+    "styled-components": "^5.2.1"
   }
 }

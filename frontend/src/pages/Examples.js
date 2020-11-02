@@ -38,7 +38,7 @@ export default function Examples() {
     notification.open({
       message: 'Notification Title',
       description:
-        'I will never close automatically. This is a purposely very very long description that has many many characters and words.',
+        'I will never close automatically. This is a purposely very very long description that has many many characters and words. I hate ant design so much wow',
       duration: 0,
     });
   }

@@ -26,7 +26,7 @@ git push origin <CURRENT_BRANCH>
 
 ## Installation
 
-Ensure [nodejs](https://nodejs.org/en/), [npm](https://www.npmjs.com/get-npm) and [yarn](https://classic.yarnpkg.com/en/docs/install/) are properly installed and configured. Clone the forked repository, and run the following commands:
+Ensure [nodejs](https://nodejs.org/en/), [npm](https://www.npmjs.com/get-npm) and [yarn](https://classic.yarnpkg.com/en/docs/install/) are properly installed and configured. Clone the forked repository, create .env files based on the .env.examples, and run the following commands:
 
 ```bash
 cd weatherdb
