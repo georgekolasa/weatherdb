@@ -1,12 +1,33 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const pingme = require('./endpoints/pingme');
-
-const port = process.env.PORT || 5000;
+const oracledb = require('oracledb');
+const dbConfig = require('./config/db');
 
 require('dotenv').config();
 
+const port = process.env.PORT || 5000;
+
 async function bootstrap() {
+  let connection;
+
+  // TODO: I am not working, the dbConfig needs to be
+  // properly configured, which it is currently not. The connection logic itself
+  // is good, however.
+  try {
+    connection = await oracledb.getConnection(dbConfig);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
   const app = express();
 
   app.use(bodyParser.json());

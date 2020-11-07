@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select, Input, Form, Space } from 'antd';
+import { useStore } from '../../stores';
 
 import './styles/Form.css';
 
@@ -10,7 +11,11 @@ const fakeDatabaseColOptions = Array.from({ length: 5 }, (_, index) => (
 ));
 
 export default function QueryForm() {
-  async function handleSumbit() {
+  // TODO: USE ME
+  const setQueryData = useStore((state) => state.setQueryData);
+
+  async function handleSumbit(e) {
+    e.preventDefault();
     // this is where the query will need to be constructed,
     // or sent off to the helper functions that will each help build
     // some portion of the query...
@@ -18,10 +23,18 @@ export default function QueryForm() {
     // be interpretted based off status.
     // on sucess, store the data appropriately into the state management solution we
     // choose. notify of errors on faiures
+    // ===========
+    // outline:
+    // toggle loading
+    // check query
+    // construct and send to server
+    // get results
+    // store results
+    // toggle loading
   }
 
   return (
-    <Form style={{ paddingTop: '1rem' }}>
+    <Form style={{ paddingTop: '1rem' }} handleSumbit={handleSumbit}>
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
         <div>
           <h4>Fields</h4>

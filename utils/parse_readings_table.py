@@ -3,7 +3,7 @@ import sys
 import argparse
 import re
 from datetime import datetime
-# import pandas as pd
+import csv
 from pathlib import Path
 
 test_str = 'WA010101860191701PRCP   20  I    0  I    0  I    0  I   10  I   10  I    0  I    0  I   30  I    0  I    0  I    0  I   10  I    0  I    0  I    0  I    0  I    0  I  180  I   30  I    0  I   80  I    0  I   80  I  110  I   30  I    0  I   30  I   80  I   20  I  130  I'
@@ -25,90 +25,78 @@ class Record:
                                                                                                                       self.vals, self.mflags, self.qflags, self.sflags)
 
 
-def parse_file(file_path):
-    path_obj = Path(file_path)
+class Parser:
+    def __init__(self, input_file):
+        self.input_file = input_file
+        self.parent_directory = Path(input_file).parent
+        self.records = []
 
-    ext = path_obj.suffix
+        # TODO: define these
+        self.csv_headers = ['']
 
-    if ext is None:
-        print('wrong file type')
-        sys.exit(1)
+    def parse_file(self):
+        path_obj = Path(self.input_file)
 
-    ext = ext.replace('.', '')
+        ext = path_obj.suffix
 
-    if ext.lower() != 'dly' and ext.lower() != 'txt':
-        print('wrong file type, only dly and txt files')
-        sys.exit(1)
+        if ext is None:
+            print('wrong file type')
+            sys.exit(1)
 
-    with open(file_path, 'r') as f:
-        lines = f.readlines()
+        ext = ext.replace('.', '')
 
-        records = []
+        if ext.lower() != 'dly' and ext.lower() != 'txt':
+            print('wrong file type, only dly and txt files')
+            sys.exit(1)
 
-        for line in lines:
-            ID = line[0:11]  # first 11 characters are the ID
-            year = line[11:15]  # characters 12 - 15 are year
-            month = line[15:17]  # characters 12 - 15 are year
-            element = line[17:21]
+        with open(self.input_file, 'r') as f:
+            lines = f.readlines()
 
-            vals = []
-            mflags = []
-            qflags = []
-            sflags = []
+            for line in lines:
+                ID = line[0:11]  # first 11 characters are the ID
+                year = line[11:15]  # characters 12 - 15 are year
+                month = line[15:17]  # characters 12 - 15 are year
+                element = line[17:21]
 
-            iter = 21
-            while iter < 269:
-                current_val = line[iter:iter+5]
-                mflag = line[iter+5]
-                qflag = line[iter+6]
-                sflag = line[iter+7]
+                vals = []
+                mflags = []
+                qflags = []
+                sflags = []
 
-                vals.append(current_val.strip())
-                mflags.append(mflag.strip())
-                qflags.append(qflag.strip())
-                sflags.append(sflag.strip())
+                iter = 21
+                while iter < 269:
+                    current_val = line[iter:iter+5]
+                    mflag = line[iter+5]
+                    qflag = line[iter+6]
+                    sflag = line[iter+7]
 
-                iter += 8
+                    vals.append(current_val.strip())
+                    mflags.append(mflag.strip())
+                    qflags.append(qflag.strip())
+                    sflags.append(sflag.strip())
 
-            records.append(Record(ID, year, month, element,
-                                  vals, mflags, qflags, sflags))
+                    iter += 8
 
-    return records
+                self.records.append(Record(ID, year, month, element,
+                                           vals, mflags, qflags, sflags))
 
+    def write_out(self):
+        parsed_output = os.path.join(
+            self.parent_directory, 'READINGS_TABLE.csv')
+        with open(parsed_output, 'w') as f:
+            writer = csv.writer(f, delimiter=',',
+                                quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-def test():
-    ID = test_str[0:11]  # first 11 characters are the ID
-    year = test_str[11:15]  # characters 12 - 15 are year
-    month = test_str[15:17]  # characters 12 - 15 are year
-    element = test_str[17:21]
+            writer.writerow(self.csv_headers)
 
-    vals = []
-    mflags = []
-    qflags = []
-    sflags = []
-
-    iter = 21
-    while iter < 261:
-        current_val = test_str[iter:iter+5]
-        mflag = test_str[iter+5]
-        qflag = test_str[iter+6]
-        sflag = test_str[iter+7]
-
-        vals.append(current_val.strip())
-        mflags.append(mflag.strip())
-        qflags.append(qflag.strip())
-        sflags.append(sflag.strip())
-
-        iter += 8
-
-    print(ID, year, month, element, vals, mflags, sflags)
+            for record in self.records:
+                # FIXME: make this match our DB schema
+                writer.writerow(
+                    [record.ID, record.year, record.month, record.element]
+                )
 
 
 def cli():
-    # print('TESTING STRING:', test_str, '\n')
-
-    # print('PARSED VALUES')
-    # test()
     my_parser = argparse.ArgumentParser(
         description="utility created for my db class")
 
@@ -119,9 +107,12 @@ def cli():
 
     _file = args.file
 
-    parsed_file = parse_file(_file)
-    for record in parsed_file:
-        print(record, end='\n\n')
+    parser = Parser(_file)
+    parser.parse_file()
+
+    # records = parse_file(_file)
+    # for record in records:
+    #     print(record, end='\n\n')
 
 
 if __name__ == "__main__":
