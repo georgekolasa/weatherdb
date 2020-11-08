@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const pingme = require('./endpoints/pingme');
 const oracledb = require('oracledb');
-const dbConfig = require('./config/db');
 
 require('dotenv').config();
 
@@ -15,7 +14,14 @@ async function bootstrap() {
   // properly configured, which it is currently not. The connection logic itself
   // is good, however.
   try {
-    connection = await oracledb.getConnection(dbConfig);
+    connection = await oracledb.getConnection({
+      user: process.env.NODE_ORACLEDB_USER,
+      password: process.env.NODE_ORACLEDB_PASSWORD,
+      connectString: process.env.NODE_ORACLEDB_CONNECTIONSTRING,
+      externalAuth: process.env.NODE_ORACLEDB_EXTERNALAUTH ? true : false,
+    });
+
+    console.log('CONNECTED TO ORACLE YEET');
   } catch (err) {
     console.error(err);
   } finally {
