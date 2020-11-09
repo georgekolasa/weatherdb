@@ -7,12 +7,11 @@ require('dotenv').config();
 
 const port = process.env.PORT || 5000;
 
+const TABLE_PREFIX = process.env.DB_OWNER_USER;
+
 async function bootstrap() {
   let connection;
 
-  // TODO: I am not working, the dbConfig needs to be
-  // properly configured, which it is currently not. The connection logic itself
-  // is good, however.
   try {
     connection = await oracledb.getConnection({
       user: process.env.NODE_ORACLEDB_USER,
@@ -22,6 +21,17 @@ async function bootstrap() {
     });
 
     console.log('CONNECTED TO ORACLE YEET');
+
+    const tables = await connection.execute(
+      'SELECT table_name FROM all_tables ORDER BY table_name'
+    );
+
+    const stations = await connection.execute(
+      `SELECT * FROM ${TABLE_PREFIX}.STATION`
+    );
+
+    console.log('ALL AVAILABLE TABLES:', tables.rows);
+    console.log('STATION TABLE:', stations.rows);
   } catch (err) {
     console.error(err);
   } finally {
