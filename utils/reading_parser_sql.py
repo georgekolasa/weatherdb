@@ -52,6 +52,6 @@ for file in input_files:
                 day = '0' + day
             observationID = reading.READING_ID + day
             date = 'DATE \'' + str(reading.YEAR) + '-' + str(reading.MONTH) + '-' + day + '\''
-            if observation is not 'NULL':
+            if observation != 'NULL':
                 out_file.write(f'''INSERT INTO OBSERVATION VALUES ('{observationID}','{reading.READING_ID}','{reading.ELEMENT}',{observation},{reading.s_flags[i]},{reading.m_flags[i]},{reading.q_flags[i]},{date});\n''')        
     
