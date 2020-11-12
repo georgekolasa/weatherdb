@@ -1,7 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const oracledb = require('oracledb');
 const pingme = require('./endpoints/pingme');
 const select = require('./endpoints/select');
+const validateQuery = require('./middleware/validateQuery');
 
 require('dotenv').config();
 
@@ -13,6 +15,13 @@ async function bootstrap() {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
+  const connection = await oracledb.getConnection({
+    user: process.env.NODE_ORACLEDB_USER,
+    password: process.env.NODE_ORACLEDB_PASSWORD,
+    connectString: process.env.NODE_ORACLEDB_CONNECTIONSTRING,
+    externalAuth: process.env.NODE_ORACLEDB_EXTERNALAUTH ? true : false,
+  });
+
   app.listen(port, () =>
     console.log(`Express server listening to http://localhost:${port}`)
   );
@@ -20,7 +29,22 @@ async function bootstrap() {
   // test route
   app.get('/pingme', pingme);
 
-  app.post('/api/select', select);
+  app.post('/api/select', validateQuery, async (req, res) => {
+    const TABLE_PREFIX = process.env.DB_OWNER_USER;
+
+    if (!connection) {
+      res.status(504).send('Connection to the Database has been lost!');
+    } else {
+      try {
+        let testResponse = await connection.execute(
+          `SELECT * FROM ${TABLE_PREFIX}.STATION WHERE ROWNUM < 20`
+        );
+        res.send(testResponse);
+      } catch (error) {
+        res.status(500).send(error);
+      }
+    }
+  });
 
   // EXAMPLE WITH MIDDLEWARE
   // app.get('/pingme', validateQuery, pingme);
@@ -36,3 +60,9 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+/**
+ * 1). tuples uploaded: done
+ * 2). connection established between node + oracle: done
+ * 3). make the connection between react and node, therefore connecting oracle with frontend: done
+ */
