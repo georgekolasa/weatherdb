@@ -20,7 +20,11 @@ export default function useQuery() {
           setQueryData(testResponse.data);
         } else {
           // TODO: handle error better
-          createNotification('Uh oh, something went wrong');
+          createNotification({
+            message: 'Error Occurred',
+            description: 'A server error occurred!',
+            duration: 0,
+          });
         }
       },
     }),
