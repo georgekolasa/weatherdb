@@ -26,7 +26,6 @@ async function bootstrap() {
     console.log(`Express server listening to http://localhost:${port}`)
   );
 
-  // test route
   app.get('/pingme', pingme);
 
   app.post('/api/select', validateQuery, async (req, res) => {
@@ -39,7 +38,14 @@ async function bootstrap() {
         let testResponse = await connection.execute(
           `SELECT * FROM ${TABLE_PREFIX}.STATION WHERE ROWNUM < 20`
         );
-        res.send(testResponse);
+        console.log(testResponse);
+
+        const { metaData, rows } = testResponse;
+        const cols = metaData.map((col) => col.name);
+
+        const ret = [cols, ...rows];
+
+        res.send(ret);
       } catch (error) {
         res.status(500).send(error);
       }

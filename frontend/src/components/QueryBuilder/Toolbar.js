@@ -1,30 +1,14 @@
-import { Button, notification } from 'antd';
+import { Button } from 'antd';
 import React from 'react';
 import axios from 'axios';
 import './styles/Toolbar.css';
+import useQuery from '../../util/useQuery';
 
 export default function ToolBar() {
-  function createNotification(description) {
-    notification.open({
-      message: 'Notification Title',
-      description,
-      duration: 0,
-    });
-  }
+  const { testTrend } = useQuery();
 
-  async function testQuery() {
-    const response = await axios
-      .post('/api/select')
-      .catch((error) => error.response);
-
-    if (response.status === 200) {
-      createNotification(JSON.stringify(response.data));
-    } else {
-      createNotification('Uh oh, something went wrong');
-    }
-
-    console.log(response);
-    // TODO: store in state
+  async function handleClick() {
+    await testTrend();
   }
 
   return (
@@ -35,10 +19,9 @@ export default function ToolBar() {
       <Button className="toolbar-btn" size="large">
         Visualization 2
       </Button>
-      <Button className="toolbar-btn" size="large" onClick={testQuery}>
+      <Button className="toolbar-btn" size="large" onClick={handleClick}>
         Test Select Query
       </Button>
-
       <Button className="toolbar-btn" size="large">
         Download
       </Button>

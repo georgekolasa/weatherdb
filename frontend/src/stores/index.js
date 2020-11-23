@@ -5,6 +5,9 @@ export const useStore = create((set) => ({
 
   queryData: null,
   loading: false,
+  chartConfig: {
+    chartType: 'ScatterChart',
+  },
 
   // END STORE VARIABLES
 

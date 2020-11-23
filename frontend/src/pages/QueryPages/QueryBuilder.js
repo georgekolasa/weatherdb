@@ -1,7 +1,7 @@
 import React from 'react';
-import Preview from '../../components/QueryBuilder/Preview';
 import Sidebar from '../../components/QueryBuilder/Sidebar';
 import ToolBar from '../../components/QueryBuilder/Toolbar';
+import Visualization from '../../components/Visualization/Visualization';
 import './styles/QueryBuilder.css';
 
 export default function QueryBuilder() {
@@ -10,7 +10,7 @@ export default function QueryBuilder() {
       <Sidebar />
       <div className="query-builder-central-layout">
         <ToolBar />
-        <Preview />
+        <Visualization />
       </div>
     </div>
   );
