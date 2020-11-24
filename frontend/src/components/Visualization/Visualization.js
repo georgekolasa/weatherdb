@@ -6,11 +6,12 @@ import PageLoader from '../PageLoader';
 import './Visualization.css';
 
 export default function Visualization() {
-  const { data, loading, chartConfig } = useStore(
+  const { data, loading, chartConfig, chartOptions} = useStore(
     (state) => ({
       data: state.queryData,
       loading: state.loading,
       chartConfig: state.chartConfig,
+      chartOptions: state.chartOptions,
     }),
     shallow
   );
@@ -34,7 +35,7 @@ export default function Visualization() {
   return (
     <div className="preview-layout">
       {(data || loading) && (
-        <Chart data={data} chartType={chartType} loading={<PageLoader />} />
+        <Chart data={data} chartType={chartType} options={chartOptions} loading={<PageLoader />} />
       )}
 
       {!data && !loading && <div>Make a query to get started!</div>}

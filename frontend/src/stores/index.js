@@ -5,8 +5,15 @@ export const useStore = create((set) => ({
 
   queryData: null,
   loading: false,
+  chartOptions: {
+    title: 'Average Temperature in the United Kingdom, 1975 - Present',
+    hAxis: {title: 'Year', format: '####', minValue: 1975, maxValue: 2020},
+    vAxis: {title: 'Temperature in 0.1 C'},
+    trendlines: {0: {}, color: 'orange'},
+    legend: 'none'
+    },
   chartConfig: {
-    chartType: 'ScatterChart',
+    chartType: 'ScatterChart'
   },
 
   // END STORE VARIABLES
