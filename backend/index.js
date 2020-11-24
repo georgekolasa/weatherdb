@@ -36,7 +36,13 @@ async function bootstrap() {
     } else {
       try {
         let testResponse = await connection.execute(
-          `SELECT * FROM ${TABLE_PREFIX}.STATION WHERE ROWNUM < 20`
+          `SELECT EXTRACT (YEAR FROM DATE_TAKEN), ROUND(AVG(VALUE), 2)
+          FROM ${TABLE_PREFIX}.READING 
+          INNER JOIN ${TABLE_PREFIX}.STATION USING (STATION_ID)
+          WHERE ELEMENT='TAVG' AND COUNTRY='UK'
+          AND EXTRACT (YEAR FROM DATE_TAKEN) > 1974
+          GROUP BY EXTRACT (YEAR FROM DATE_TAKEN) 
+          ORDER BY EXTRACT (YEAR FROM DATE_TAKEN) ASC`
         );
         console.log(testResponse);
 
