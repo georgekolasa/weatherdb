@@ -1,8 +1,10 @@
 import React from 'react';
-import { Select, Input, Form, Space, Button} from 'antd';
+import { Select, Input, Form, Space, Button } from 'antd';
 import { useStore } from '../../stores';
 
 import './styles/Form.css';
+import { CHART_TYPES } from '../../util/constants';
+import shallow from 'zustand/shallow';
 
 const { Option } = Select;
 
@@ -11,14 +13,19 @@ const fakeDatabaseColOptions = Array.from({ length: 5 }, (_, index) => (
 ));
 
 export default function QueryForm() {
-  // TODO: USE ME
-  const setQueryData = useStore((state) => state.setQueryData);
+  const { chartConfig, setQueryData } = useStore(
+    (state) => ({
+      setQueryData: state.setQueryData,
+      chartConfig: state.chartConfig,
+    }),
+    shallow
+  );
 
   const onSubmit = (data) => {
     console.log(data);
-  }
-    //TODO: set chart options in state based on input
-    // create query based on input
+  };
+  //TODO: set chart options in state based on input
+  // create query based on input
 
   return (
     <Form style={{ paddingTop: '1rem' }} onSubmit={onSubmit}>
@@ -37,11 +44,18 @@ export default function QueryForm() {
         </div>
         <div>
           <h4>Chart Type</h4>
-          <Input name='Chart Type'/>
+          <Select
+            style={{ width: '100%' }}
+            options={Object.keys(CHART_TYPES).map((key) => {
+              return { label: CHART_TYPES[key], value: CHART_TYPES[key] };
+            })}
+            name="Chart Type"
+            value={chartConfig.chartType}
+          />
         </div>
         <div>
           <h4>Country</h4>
-          <Input name='Country'/>
+          <Input name="Country" />
         </div>
         <div>
           <h4>Something</h4>

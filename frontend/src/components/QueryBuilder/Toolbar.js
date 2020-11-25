@@ -1,9 +1,9 @@
 import { Button } from 'antd';
 import React from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import './styles/Toolbar.css';
 import useQuery from '../../util/useQuery';
-import QueryForm from './QueryForm';
+// import QueryForm from './QueryForm';
 
 export default function ToolBar() {
   const { selectQuery } = useQuery();

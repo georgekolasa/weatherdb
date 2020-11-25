@@ -13,7 +13,7 @@ export default function useQuery() {
     () => ({
       async selectQuery() {
         const queryResponse = await axios
-          .post('/api/select', {query: selectQuery})
+          .post('/api/select', { query: selectQuery })
           .catch((error) => error.response);
 
         if (queryResponse.status === 200) {
@@ -24,7 +24,9 @@ export default function useQuery() {
             message: 'Error Occurred',
             description: 'A server error occurred!',
             duration: 0,
-          })
+          });
+
+          console.log(queryResponse.data);
         }
       },
       async testTrend() {
@@ -41,7 +43,7 @@ export default function useQuery() {
             message: 'Error Occurred',
             description: 'A server error occurred!',
             duration: 0,
-          })
+          });
         }
       },
     }),

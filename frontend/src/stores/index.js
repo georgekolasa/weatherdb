@@ -13,10 +13,10 @@ export const useStore = create((set) => ({
     hAxis: {},
     vAxis: {},
     trendlines: {},
-    legend: 'none'
-    },
+    legend: 'none',
+  },
   chartConfig: {
-    chartType: 'ScatterChart'
+    chartType: 'ScatterChart',
   },
 
   // END STORE VARIABLES

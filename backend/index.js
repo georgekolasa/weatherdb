@@ -29,11 +29,10 @@ async function bootstrap() {
   app.get('/pingme', pingme);
 
   app.post('/api/select', validateQuery, async (req, res) => {
-    const {query} = req.body;
+    const { query } = req.body;
     if (!connection) {
       res.status(504).send('Connection to the Database has been lost!');
     } else {
-
       try {
         console.log(query);
         let queryResponse = await connection.execute(query);
@@ -45,6 +44,7 @@ async function bootstrap() {
 
         res.send(ret);
       } catch (error) {
+        console.log(error);
         res.status(500).send(error);
       }
     }
