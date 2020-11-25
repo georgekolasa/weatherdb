@@ -1,15 +1,17 @@
 import create from 'zustand';
 
+
 export const useStore = create((set) => ({
   // STORE VARIABLES
 
   queryData: null,
+  query: null,
   loading: false,
   chartOptions: {
-    title: 'Average Temperature in the United Kingdom, 1975 - Present',
-    hAxis: {title: 'Year', format: '####', minValue: 1975, maxValue: 2020},
-    vAxis: {title: 'Temperature in 0.1 C'},
-    trendlines: {0: {}, color: 'orange'},
+    title: 'Title',
+    hAxis: {},
+    vAxis: {},
+    trendlines: {},
     legend: 'none'
     },
   chartConfig: {
@@ -19,7 +21,6 @@ export const useStore = create((set) => ({
   // END STORE VARIABLES
 
   // STORE ACTIONS
-
   setQueryData: (queryData) =>
     set((state) => ({ ...state, queryData: queryData })),
 
