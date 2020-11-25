@@ -16,20 +16,6 @@ export default function Visualization() {
     shallow
   );
 
-  console.log(data);
-
-  // TODO: add chart options to the chartConfig in the zustand store (stores/index.js)
-  /**
-   * Example:
-   * 
-   * {
-      title: 'Age of sugar maples vs. trunk diameter, in inches',
-      hAxis: { title: 'Diameter' },
-      vAxis: { title: 'Age' },
-      legend: 'none',
-      trendlines: { 0: {} },
-    }
-   */
   const { chartType } = chartConfig;
 
   return (
