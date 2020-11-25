@@ -29,24 +29,16 @@ async function bootstrap() {
   app.get('/pingme', pingme);
 
   app.post('/api/select', validateQuery, async (req, res) => {
-    const TABLE_PREFIX = process.env.DB_OWNER_USER;
-
+    const {query} = req.body;
     if (!connection) {
       res.status(504).send('Connection to the Database has been lost!');
     } else {
-      try {
-        let testResponse = await connection.execute(
-          `SELECT EXTRACT (YEAR FROM DATE_TAKEN), ROUND(AVG(VALUE), 2)
-          FROM ${TABLE_PREFIX}.READING 
-          INNER JOIN ${TABLE_PREFIX}.STATION USING (STATION_ID)
-          WHERE ELEMENT='TAVG' AND COUNTRY='UK'
-          AND EXTRACT (YEAR FROM DATE_TAKEN) > 1974
-          GROUP BY EXTRACT (YEAR FROM DATE_TAKEN) 
-          ORDER BY EXTRACT (YEAR FROM DATE_TAKEN) ASC`
-        );
-        console.log(testResponse);
 
-        const { metaData, rows } = testResponse;
+      try {
+        console.log(query);
+        let queryResponse = await connection.execute(query);
+
+        const { metaData, rows } = queryResponse;
         const cols = metaData.map((col) => col.name);
 
         const ret = [cols, ...rows];

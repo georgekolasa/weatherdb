@@ -3,17 +3,18 @@ import React from 'react';
 import axios from 'axios';
 import './styles/Toolbar.css';
 import useQuery from '../../util/useQuery';
+import QueryForm from './QueryForm';
 
 export default function ToolBar() {
-  const { testTrend } = useQuery();
+  const { selectQuery } = useQuery();
 
   async function handleClick() {
-    await testTrend();
+    await selectQuery();
   }
 
   return (
     <div className="toolbar-layout">
-      <Button className="toolbar-btn" size="large">
+      <Button className="toolbar-btn" size="large" onClick={handleClick}>
         See X Chart
       </Button>
       <Button className="toolbar-btn" size="large">

@@ -1,11 +1,12 @@
 import create from 'zustand';
 
+// TODO: SET TABLE PREFIX
 
 export const useStore = create((set) => ({
   // STORE VARIABLES
 
   queryData: null,
-  query: null,
+  query: `SELECT LATITUDE, LONGITUDE FROM STATION WHERE ROWNUM < 100`,
   loading: false,
   chartOptions: {
     title: 'Title',
