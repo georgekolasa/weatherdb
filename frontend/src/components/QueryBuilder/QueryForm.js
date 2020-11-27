@@ -1,7 +1,7 @@
 import React from 'react';
-import { Select, Input, Form, Space, DatePicker } from 'antd';
+import { Select, Input, Form, Space, DatePicker, Checkbox } from 'antd';
 import { useStore } from '../../stores';
-import { CHART_TYPES, dbFields } from '../../util/constants';
+import { CHART_TYPES, dbFields, countries } from '../../util/constants';
 import shallow from 'zustand/shallow';
 import './styles/Form.css';
 
@@ -14,10 +14,10 @@ const fakeDatabaseColOptions = Array.from({ length: 5 }, (_, index) => (
 ));
 
 export default function QueryForm() {
-  const { chartConfig, setQueryData } = useStore(
+  const { chartOptions, chartConfig } = useStore(
     (state) => ({
-      setQueryData: state.setQueryData,
       chartConfig: state.chartConfig,
+      chartOptions: state.chartOptions,
     }),
     shallow
   );
@@ -25,7 +25,9 @@ export default function QueryForm() {
   function onSubmit(data) {
     console.log(data);
   }
-
+  function toggleTrendline() {
+    // TODO: implement me
+  }
   function testDateChange(range) {
     if (range && Array.isArray(range)) {
       const from = range[0].format('YYYY-MM-DD');
@@ -57,12 +59,42 @@ export default function QueryForm() {
             {fakeDatabaseColOptions}
           </Select>
         </div>
-
+        <div>
+          <h4>Countries</h4>
+          <Select
+            mode="multiple"
+            // allowClear
+            style={{ width: '100%' }}
+            placeholder="Please select"
+            // value = {}
+            options={countries}
+          >
+          </Select>
+        </div>
         <div>
           <h4>Date Range</h4>
           <RangePicker onChange={testDateChange} />
         </div>
-
+        <Input.Group>
+          <div>
+            <h4>Latitude</h4>
+            <Select style={{width: '50%'}}>
+              <Option value='lessThan'>Less than</Option>
+              <Option value='greaterThan'>Greater than</Option>
+            </Select>
+            <Input style={{width: '50%'}} placeholder='Enter Latitude'/>
+          </div>
+        </Input.Group>
+        <Input.Group>
+          <div>
+            <h4>Longitude</h4>
+            <Select style={{width: '50%'}}>
+              <Option value='lessThan'>Less than</Option>
+              <Option value='greaterThan'>Greater than</Option>
+            </Select>
+            <Input style={{width: '50%'}} placeholder='Enter Longitude'/>
+          </div>
+        </Input.Group>
         <div>
           <h4>Chart Type</h4>
           <Select
@@ -76,8 +108,11 @@ export default function QueryForm() {
         </div>
 
         <div>
-          <h4>Something</h4>
-          <Input />
+          <Checkbox
+            name = "Trendline"
+            onChange={toggleTrendline}>
+              Trendline
+          </Checkbox>
         </div>
       </Space>
     </Form>

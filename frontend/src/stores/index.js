@@ -6,13 +6,19 @@ export const useStore = create((set) => ({
   // STORE VARIABLES
 
   queryData: null,
-  query: `SELECT LATITUDE, LONGITUDE FROM GARMON.STATION WHERE ROWNUM < 100`,
+  query: `SELECT EXTRACT(YEAR FROM DATE_TAKEN), ROUND(AVG(VALUE),2)
+  FROM GARMON.READING INNER JOIN
+  GARMON.STATION USING(STATION_ID) 
+  WHERE ELEMENT='TAVG' AND COUNTRY='UK'
+  AND EXTRACT (YEAR FROM DATE_TAKEN) > 1974
+  GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+  ORDER BY EXTRACT (YEAR FROM DATE_TAKEN)`,
   loading: false,
   chartOptions: {
-    title: 'Title',
-    hAxis: {},
-    vAxis: {},
-    trendlines: {},
+    title: 'Average Daily Temperatures in the United Kingdom, 1975 - Present',
+    hAxis: { title: 'Year', minValue: 1975},
+    vAxis: { title: 'Temperature (0.1 C)' },
+    trendlines: { 0: {}, color: 'orange' },
     legend: 'none',
   },
   chartConfig: {
