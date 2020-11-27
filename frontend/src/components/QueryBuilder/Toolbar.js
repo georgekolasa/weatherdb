@@ -1,9 +1,8 @@
 import { Button } from 'antd';
 import React from 'react';
-// import axios from 'axios';
 import './styles/Toolbar.css';
 import useQuery from '../../util/useQuery';
-// import QueryForm from './QueryForm';
+import DownloadModal from '../DownloadModal';
 
 export default function ToolBar() {
   const { selectQuery } = useQuery();
@@ -23,9 +22,7 @@ export default function ToolBar() {
       <Button className="toolbar-btn" size="large" onClick={handleClick}>
         Test Select Query
       </Button>
-      <Button className="toolbar-btn" size="large">
-        Download
-      </Button>
+      <DownloadModal />
     </div>
   );
 }

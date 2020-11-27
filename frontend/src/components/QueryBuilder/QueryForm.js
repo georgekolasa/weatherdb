@@ -1,10 +1,11 @@
 import React from 'react';
-import { Select, Input, Form, Space, Button } from 'antd';
+import { Select, Input, Form, Space, DatePicker } from 'antd';
 import { useStore } from '../../stores';
-
-import './styles/Form.css';
-import { CHART_TYPES } from '../../util/constants';
+import { CHART_TYPES, dbFields } from '../../util/constants';
 import shallow from 'zustand/shallow';
+import './styles/Form.css';
+
+const { RangePicker } = DatePicker;
 
 const { Option } = Select;
 
@@ -21,9 +22,22 @@ export default function QueryForm() {
     shallow
   );
 
-  const onSubmit = (data) => {
+  function onSubmit(data) {
     console.log(data);
-  };
+  }
+
+  function testDateChange(range) {
+    if (range && Array.isArray(range)) {
+      const from = range[0].format('YYYY-MM-DD');
+      const to = range[1].format('YYYY-MM-DD');
+
+      console.log(`${from}-${to}`);
+      // TODO: STORE IN STATE OR JUST PUT SOMEWHERE TO BUILD QUERY
+    } else {
+      // RESET STATE FOR DATES
+    }
+  }
+
   //TODO: set chart options in state based on input
   // create query based on input
 
@@ -34,14 +48,21 @@ export default function QueryForm() {
           <h4>Fields</h4>
           <Select
             mode="multiple"
-            allowClear
+            // allowClear
             style={{ width: '100%' }}
             placeholder="Please select"
-            defaultValue={[]}
+            // value = {}
+            options={dbFields}
           >
             {fakeDatabaseColOptions}
           </Select>
         </div>
+
+        <div>
+          <h4>Date Range</h4>
+          <RangePicker onChange={testDateChange} />
+        </div>
+
         <div>
           <h4>Chart Type</h4>
           <Select
@@ -53,30 +74,7 @@ export default function QueryForm() {
             value={chartConfig.chartType}
           />
         </div>
-        <div>
-          <h4>Country</h4>
-          <Input name="Country" />
-        </div>
-        <div>
-          <h4>Something</h4>
-          <Input />
-        </div>
-        <div>
-          <h4>Something</h4>
-          <Input />
-        </div>
-        <div>
-          <h4>Something</h4>
-          <Input />
-        </div>
-        <div>
-          <h4>Something</h4>
-          <Input />
-        </div>
-        <div>
-          <h4>Something</h4>
-          <Input />
-        </div>
+
         <div>
           <h4>Something</h4>
           <Input />

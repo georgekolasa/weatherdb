@@ -6,7 +6,7 @@ export const useStore = create((set) => ({
   // STORE VARIABLES
 
   queryData: null,
-  query: `SELECT LATITUDE, LONGITUDE FROM STATION WHERE ROWNUM < 100`,
+  query: `SELECT LATITUDE, LONGITUDE FROM GARMON.STATION WHERE ROWNUM < 100`,
   loading: false,
   chartOptions: {
     title: 'Title',

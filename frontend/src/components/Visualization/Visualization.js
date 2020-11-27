@@ -2,11 +2,12 @@ import React from 'react';
 import { useStore } from '../../stores';
 import shallow from 'zustand/shallow';
 import { Chart } from 'react-google-charts';
-import PageLoader from '../PageLoader';
+import { AlwaysOnLoader } from '../PageLoader';
 import './Visualization.css';
+import CenteredDiv from '../CenteredDiv';
 
 export default function Visualization() {
-  const { data, loading, chartConfig, chartOptions} = useStore(
+  const { data, loading, chartConfig, chartOptions } = useStore(
     (state) => ({
       data: state.queryData,
       loading: state.loading,
@@ -21,10 +22,19 @@ export default function Visualization() {
   return (
     <div className="preview-layout">
       {(data || loading) && (
-        <Chart data={data} chartType={chartType} options={chartOptions} loading={<PageLoader />} />
+        <Chart
+          height="100%"
+          width="100%"
+          data={data}
+          chartType={chartType}
+          options={chartOptions}
+          loader={<AlwaysOnLoader />}
+        />
       )}
 
-      {!data && !loading && <div>Make a query to get started!</div>}
+      {!data && !loading && (
+        <CenteredDiv>Make a query to get started!</CenteredDiv>
+      )}
     </div>
   );
 }
