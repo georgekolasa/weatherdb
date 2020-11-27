@@ -13,16 +13,14 @@ export const useStore = create((set) => ({
   AND EXTRACT (YEAR FROM DATE_TAKEN) > 1974
   GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
   ORDER BY EXTRACT (YEAR FROM DATE_TAKEN)`,
+  chartType: 'ScatterChart',
   loading: false,
   chartOptions: {
     title: 'Average Daily Temperatures in the United Kingdom, 1975 - Present',
-    hAxis: { title: 'Year', minValue: 1975},
+    hAxis: { format: '####', title: 'Year', minValue: 1975},
     vAxis: { title: 'Temperature (0.1 C)' },
-    trendlines: { 0: {}, color: 'orange' },
+    trendlines: { 0: {type: 'linear', color: 'orange'} },
     legend: 'none',
-  },
-  chartConfig: {
-    chartType: 'ScatterChart',
   },
 
   // END STORE VARIABLES

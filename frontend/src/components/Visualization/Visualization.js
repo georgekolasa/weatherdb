@@ -7,17 +7,15 @@ import './Visualization.css';
 import CenteredDiv from '../CenteredDiv';
 
 export default function Visualization() {
-  const { data, loading, chartConfig, chartOptions } = useStore(
+  const { data, loading, chartType, chartOptions } = useStore(
     (state) => ({
       data: state.queryData,
       loading: state.loading,
-      chartConfig: state.chartConfig,
+      chartType: state.chartType,
       chartOptions: state.chartOptions,
     }),
     shallow
   );
-
-  const { chartType } = chartConfig;
 
   return (
     <div className="preview-layout">
