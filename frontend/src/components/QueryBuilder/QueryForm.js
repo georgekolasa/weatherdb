@@ -6,30 +6,39 @@ import shallow from 'zustand/shallow';
 import './styles/Form.css';
 
 export default function QueryForm() {
-  const { chartOptions, chartType } = useStore(
+  const { setQuery, setChartOptions, setChartType } = useStore(
     (state) => ({
-      chartType: state.chartType,
-      chartOptions: state.chartOptions,
+      setChartType: state.setChartType,
+      setChartOptions: state.setChartOptions,
+      setQuery: state.setQuery
     }),
     shallow
   );
 
-  function onSubmit(data) {
-    console.log(data);
+  function handleChange(e) {
+    const trendName = e;
+    const chartType = chartConfigs[trendName].chartType;
+    const chartOptions = chartConfigs[trendName].chartOptions;
+    const query = trendQueries[trendName];
+    setChartType(chartType);
+    setChartOptions(chartOptions);
+    setQuery(query);
   }
   
   //TODO: set query and chart options in state based on input
 
   return (
-    <Form style={{ paddingTop: '1rem' }} onSubmit={onSubmit}>
+    <Form style={{ paddingTop: '1rem' }}>
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
         <div>
           <h4>Trends</h4>
           <Select
-            style={{ width: '100%' }}
-            placeholder="Please select"
-            options={trendNames}
-          >
+          onChange = {handleChange}
+          style={{ width: '100%' }}
+          placeholder="Please select">
+            {trendNames.map((option) => (
+              <option value = {option.value}>{option.label}</option>
+            ))}
           </Select>
         </div>
       </Space>

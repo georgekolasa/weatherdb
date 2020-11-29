@@ -5,6 +5,7 @@ import { Chart } from 'react-google-charts';
 import { AlwaysOnLoader } from '../PageLoader';
 import './Visualization.css';
 import CenteredDiv from '../CenteredDiv';
+import useQuery from '../../util/useQuery';
 
 export default function Visualization() {
   const { data, loading, chartType, chartOptions } = useStore(
@@ -33,6 +34,7 @@ export default function Visualization() {
       {!data && !loading && (
         <CenteredDiv>Make a query to get started!</CenteredDiv>
       )}
+      
     </div>
   );
 }
