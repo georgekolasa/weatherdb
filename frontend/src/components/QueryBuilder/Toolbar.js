@@ -1,8 +1,9 @@
 import { Button } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import './styles/Toolbar.css';
 import useQuery from '../../util/useQuery';
 import DownloadModal from '../DownloadModal';
+import { useStore } from '../../stores';
 
 export default function ToolBar() {
   const { selectQuery } = useQuery();
@@ -15,12 +16,6 @@ export default function ToolBar() {
     <div className="toolbar-layout">
       <Button className="toolbar-btn" size="large" onClick={handleClick}>
         See X Chart
-      </Button>
-      <Button className="toolbar-btn" size="large">
-        Visualization 2
-      </Button>
-      <Button className="toolbar-btn" size="large" onClick={handleClick}>
-        Test Select Query
       </Button>
       <DownloadModal />
     </div>

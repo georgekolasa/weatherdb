@@ -1,5 +1,11 @@
 export const trendQueries = {
-  TREND1: ``,
+  TREND1: `SELECT EXTRACT(YEAR FROM DATE_TAKEN),
+  ROUND(AVG(VALUE),2) FROM GARMON.READING 
+  INNER JOIN GARMON.STATION USING(STATION_ID) 
+  WHERE ELEMENT='TAVG' AND COUNTRY='UK'
+  AND EXTRACT (YEAR FROM DATE_TAKEN) > 2000
+  GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+  ORDER BY EXTRACT (YEAR FROM DATE_TAKEN)`,
   TREND2: ``,
   TREND3: ``,
   TREND4: ``,
@@ -16,8 +22,12 @@ export const trendQueries = {
 }
 
 export const chartConfigs = {
-  TREND1: {chartType: '', chartOptions: {
-
+  TREND1: {chartType: 'ScatterChart', chartOptions: {
+    title: 'Average Daily Temperatures in the United Kingdom, 1990 - Present',
+    hAxis: { format: '####', title: 'Year', minValue: 1990},
+    vAxis: { title: 'Temperature (0.1 C)' },
+    trendlines: { 0: {type: 'linear', color: 'red'} },
+    legend: 'none',
   }
 },
   TREND2: {chartType: '', chartOptions: {
