@@ -2,12 +2,16 @@ import { useMemo } from 'react';
 import axios from 'axios';
 import { useStore } from '../stores';
 import createNotification from './createNotification';
+import shallow from 'zustand/shallow';
 
 export default function useQuery() {
-  const setQueryData = useStore((state) => state.setQueryData);
-  const queryData = useStore((state) => state.queryData);
-  const selectQuery = useStore((state) => state.query);
-  console.log(selectQuery);
+  const {setQueryData, queryData, selectQuery} = useStore(
+    (state) => ({
+      selectQuery: state.query,
+      queryData: state.queryData,
+      setQueryData: state.setQueryData
+    }),
+    shallow);
   const queries = useMemo(
     () => ({
       async selectQuery() {
@@ -28,7 +32,7 @@ export default function useQuery() {
         }
       },
     }),
-    [queryData]
+    [queryData, selectQuery]
   );
 
   return queries;
