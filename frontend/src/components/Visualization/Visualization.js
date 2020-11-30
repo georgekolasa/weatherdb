@@ -34,7 +34,6 @@ export default function Visualization() {
       {!data && !loading && (
         <CenteredDiv>Make a query to get started!</CenteredDiv>
       )}
-      
     </div>
   );
 }

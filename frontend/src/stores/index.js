@@ -1,6 +1,12 @@
 import create from 'zustand';
 
-// TODO: SET TABLE PREFIX
+const defaultState = {
+  queryData: null,
+  query: null,
+  chartType: null,
+  loading: false,
+  chartOptions: null,
+};
 
 export const useStore = create((set) => ({
   // STORE VARIABLES
@@ -16,12 +22,13 @@ export const useStore = create((set) => ({
   // STORE ACTIONS
   setQueryData: (queryData) =>
     set((state) => ({ ...state, queryData: queryData })),
-  setQuery: (query) =>
-    set((state) => ({ ...state, query: query })),
+  setQuery: (query) => set((state) => ({ ...state, query: query })),
   setChartOptions: (chartOptions) =>
-    set((state) => ({...state, chartOptions: chartOptions})),
+    set((state) => ({ ...state, chartOptions: chartOptions })),
   setChartType: (chartType) =>
-    set((state) => ({...state, chartType: chartType})),
+    set((state) => ({ ...state, chartType: chartType })),
+
+  clear: () => ({ ...defaultState }),
 
   // it will toggle by default, if you pass in a new status then it will just take
   // that instead of toggling

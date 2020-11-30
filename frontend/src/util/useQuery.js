@@ -5,34 +5,32 @@ import createNotification from './createNotification';
 import shallow from 'zustand/shallow';
 
 export default function useQuery() {
-  const {setQueryData, queryData, selectQuery} = useStore(
-    (state) => ({
-      selectQuery: state.query,
-      queryData: state.queryData,
-      setQueryData: state.setQueryData
-    }),
-    shallow);
+  const { setQuery, setQueryData, toggleLoading } = useStore((state) => ({
+    setQuery: state.setQuery,
+    setQueryData: state.setQueryData,
+    toggleLoading: state.toggleLoading,
+  }));
   const queries = useMemo(
     () => ({
-      async selectQuery() {
+      async selectQuery(query) {
+        toggleLoading(true);
         const queryResponse = await axios
-          .post('/api/select', { query: selectQuery })
+          .post('/api/select', { query: query })
           .catch((error) => error.response);
         if (queryResponse.status === 200) {
+          setQuery(query);
           setQueryData(queryResponse.data);
         } else {
-          // TODO: handle error better
           createNotification({
             message: 'Error Occurred',
             description: 'A server error occurred!',
             duration: 0,
           });
-
-          console.log(queryResponse);
         }
+        toggleLoading(false);
       },
     }),
-    [queryData, selectQuery]
+    []
   );
 
   return queries;
