@@ -1,0 +1,24 @@
+.mainTitle {
+  font-size: 6vw;
+  font-family: 'Arial Black', sans-serif;
+}
+
+.subheader {
+  text-align: center;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.vDivider {
+  border-left: 1px solid black;
+}
+
+h3 {
+  text-align: center;
+  padding-top: 30px;
+}

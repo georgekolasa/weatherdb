@@ -4,7 +4,7 @@ A React application for interacting with NOAA weather data
 
 ## Contributing
 
-Be sure to create your own fork of this repository, utilize the separation of major features into individual branches, and create Pull Requests when major features have been implement. Before creating a pull request, or continuing from your last coding session, be sure to pull any changes from the upstream. If you are unsure of what this would look like to get set up, here is a quick guide:
+Be sure to create your own fork of this repository, utilize the separation of major features into individual branches, and create Pull Requests when major features have been implemented. Before creating a pull request, or continuing from your last coding session, be sure to pull any changes from the upstream. If you are unsure of what this would look like to get set up, here is a quick guide:
 
 1. fork this repository using the button underneath your profile picture
 2. clone your fork to your machine locally
