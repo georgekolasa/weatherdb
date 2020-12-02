@@ -31,12 +31,15 @@ export default function Home() {
         imageSrc="https://s.hdnux.com/photos/75/45/75/16146241/3/rawImage.jpg"
       >
         <h1 className="mainTitle">WeatherDB</h1>
-        <Space direction="horizontal" size="middle">
+        <Space direction="horizontal" size="large">
           {/* <Button onClick={() => navigate('examples')}>
             See Examples Page
           </Button> */}
           <Button size="large" onClick={() => navigate('query')}>
             Get Started
+          </Button>
+          <Button size='large' onClick={() => navigate('about')}>
+            About
           </Button>
         </Space>
       </LazyHero>
