@@ -30,6 +30,7 @@ async function bootstrap() {
 
   app.post('/api/select', validateQuery, async (req, res) => {
     const { query } = req.body;
+    console.log('query is', query);
     if (!connection) {
       res.status(504).send('Connection to the Database has been lost!');
     } else {
