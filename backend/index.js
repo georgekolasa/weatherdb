@@ -51,6 +51,39 @@ async function bootstrap() {
     }
   });
 
+  app.post('/api/count', async (req, res) => {
+    const { query } = req.body;
+    if (!connection) {
+      res.status(504).send('Connection to the Database has been lost!');
+    } else {
+      console.log('here');
+      try {
+        let queryResponse = await connection.execute(query);
+
+        console.log(queryResponse);
+        const { metaData, rows } = queryResponse;
+
+        // console.log(metaData, rows);
+
+        const cols = metaData.map((col) => col.name);
+
+        const countRow = rows[0];
+
+        console.log(cols);
+
+        let counts = {};
+        for (let i = 0; i < cols.length; i++) {
+          counts[cols[i].toLowerCase()] = countRow[i];
+        }
+
+        res.send(counts);
+      } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+      }
+    }
+  });
+
   // EXAMPLE WITH MIDDLEWARE
   // app.get('/pingme', validateQuery, pingme);
 

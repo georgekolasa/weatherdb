@@ -21,3 +21,11 @@ export function AlwaysOnLoader() {
     </CenteredDiv>
   );
 }
+
+export function ControlledLoader({ loading }) {
+  return (
+    <CenteredDiv>
+      <Spin size="large" spinning={loading} />
+    </CenteredDiv>
+  );
+}
