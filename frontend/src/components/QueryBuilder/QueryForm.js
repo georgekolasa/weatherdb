@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Select, Form, Space, Button } from 'antd';
 import { useStore } from '../../stores';
-import { trendQueries, chartConfigs, trendNames } from '../../util/constants';
+import { trendQueries, chartConfigs, trendNames, highlights } from '../../util/constants';
 import shallow from 'zustand/shallow';
 import './styles/Form.css';
 import useQuery from '../../util/useQuery';
@@ -22,9 +22,28 @@ export default function QueryForm() {
     shallow
   );
 
+
   function handleChange(e) {
     const trendName = e;
     setSelected(trendName);
+  }
+  function showQuery() {
+    const content = {
+      message: 'SQL Query used for this trend',
+      description: trendQueries[selected],
+      duration: 0
+    }
+    createNotification(content);
+  }
+
+  function Highlights() {
+    if (selected === undefined) {
+      return <li>See key highlights of your trend!</li>
+    }
+    const highlight = highlights[selected];
+    return highlight.map((highlight) => (
+        <li>{highlight}</li>
+      ))
   }
 
   async function handleSubmit() {
@@ -38,7 +57,6 @@ export default function QueryForm() {
       const query = trendQueries[trendName];
 
       await selectQuery(query);
-
       setChartType(chartType);
       setChartOptions(chartOptions);
     } else {
@@ -68,10 +86,21 @@ export default function QueryForm() {
           </div>
         </Space>
       </Form>
+      <br></br>
+      <br></br>
+      <div className="highlights">
+        <h4>
+          Highlights
+        </h4>
+        <Highlights/>
+      </div>
       <div className="sidebar-footer">
         <div className="content">
           <Button loading={loading} onClick={handleSubmit}>
             Run
+          </Button>
+          <Button onClick={showQuery}>
+            See Query
           </Button>
         </div>
       </div>
