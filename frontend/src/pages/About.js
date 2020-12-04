@@ -34,13 +34,9 @@ export default function Home() {
 
       <div className="container">
         <p>
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
+          WeatherDB is an interactive tool for visualizing real world weather data.
+          All of WeatherDB's data is sourced from NOAA's Daily Climatological Survey,
+          A record daily weather recordings from over 115,000 weather stations around the globe.
         </p>
       </div>
       <br></br>
@@ -49,23 +45,27 @@ export default function Home() {
       <br></br>
       <div className="container">
         <p>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
-          ab illo inventore veritatis et quasi architecto beatae vitae dicta
-          sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-          aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
-          qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui
-          dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed
-          quia non numquam eius modi tempora incidunt utl abore et dolore magnam
-          aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum
-          exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex
-          ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in
-          ea voluptate velit esse quam nihil molestiae consequatur, vel illum
-          qui dolorem eum fugiat quo voluptas nulla pariatur?
+          With WeatherDB, you can finally achieve an accurate portayal of climate trends.
+          From temperature, to wind speed, and even weather phenomena, WeatherDB brings the data
+          to you, allowing you to customize your data selection and visualization.
         </p>
       </div>
+        <br></br>
+        <div className="container">
+          <p>
+            New to WeatherDB are highlights! You can now see highlights from your trend, including
+            meta-analysis of the data and other key features. The highlights only focus on the important
+            topics, so you can gain an accurate understanding of the trend instantly.
+          </p>
+        </div>
+        <br></br>
       {/* look at this: https://undraw.co/illustrations */}
-
+      <div className="container">
+      <Button href="/query">
+        Try WeatherDB today!
+      </Button>
+      </div>
+      <br></br>
       <br></br>
 
       <div className="container">
@@ -79,7 +79,7 @@ export default function Home() {
           cover={
             <img
               className="logo"
-              alt="world"
+              alt="react-logo"
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1280px-React-icon.svg.png"
             />
           }
@@ -90,7 +90,7 @@ export default function Home() {
           cover={
             <img
               className="logo"
-              alt="world"
+              alt="oracle-logo"
               src="https://www.baaer.eu/wp-content/uploads/2018/07/Slide1.jpg"
             />
           }
@@ -101,7 +101,7 @@ export default function Home() {
           cover={
             <img
               className="logo"
-              alt="google-chart"
+              alt="google-chart-logo"
               src="https://charitydigitalmarketplace.org/wp-content/uploads/2018/03/kBBKohva_400x400.jpg"
             />
           }
