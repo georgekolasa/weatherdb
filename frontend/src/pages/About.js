@@ -34,9 +34,10 @@ export default function Home() {
 
       <div className="container">
         <p>
-          WeatherDB is an interactive tool for visualizing real world weather data.
-          All of WeatherDB's data is sourced from NOAA's Daily Climatological Survey,
-          a record of daily weather recordings from over 115,000 weather stations around the globe.
+          WeatherDB is an interactive tool for visualizing real world weather
+          data. All of WeatherDB's data is sourced from NOAA's Daily
+          Climatological Survey, a record of daily weather recordings from over
+          115,000 weather stations around the globe.
         </p>
       </div>
       <br></br>
@@ -45,25 +46,44 @@ export default function Home() {
       <br></br>
       <div className="container">
         <p>
-          With WeatherDB, you can finally achieve an accurate portayal of climate trends.
-          From temperature to wind speed and even weather phenomena, WeatherDB brings the data
-          to you, allowing you to customize your data selection and visualization.
+          With WeatherDB, you can finally achieve an accurate portayal of
+          climate trends. From temperature to wind speed and even weather
+          phenomena, WeatherDB brings the data to you, allowing you to customize
+          your data selection and visualization.
         </p>
       </div>
-        <br></br>
-        <div className="container">
-          <p>
-            New to WeatherDB, highlights! You can now see highlights from your trend, including
-            meta-analysis of the data and other key features. The highlights only focus on the important
-            topics, so you can gain an accurate understanding of the trend instantly.
-          </p>
-        </div>
-        <br></br>
-      {/* look at this: https://undraw.co/illustrations */}
+      <br></br>
       <div className="container">
-      <Button href="/query">
-        Try WeatherDB today!
-      </Button>
+        <p>
+          New to WeatherDB, highlights! You can now see highlights from your
+          trend, including meta-analysis of the data and other key features. The
+          highlights only focus on the important topics, so you can gain an
+          accurate understanding of the trend instantly.
+        </p>
+      </div>
+      <br></br>
+
+      <Typography.Title className="subheader">
+        How did we upload the data?
+      </Typography.Title>
+      <div className="container" style={{ flexDirection: 'column' }}>
+        <img
+          style={{ borderRadius: '0.325rem', marginBottom: '2rem' }}
+          src={require('../assets/carbon.svg')}
+        />
+
+        <p>
+          NOAA releases all of their data in .dly files, which are fixed length
+          blocks of data without any delimeters. Characters within
+          pre-structured ranges represent various different fields, and we
+          developed multiple Python scripts to parse the .dly files,
+          line-by-line, into class entity representations. We would then
+          construct SQL INSERT queries for each of these objects
+        </p>
+      </div>
+      {/* look at this: https://undraw.co/illustrations */}
+      <div className="container" style={{ marginTop: '2rem' }}>
+        <Button href="/query">Try WeatherDB today!</Button>
       </div>
       <br></br>
       <br></br>

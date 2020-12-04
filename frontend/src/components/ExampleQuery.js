@@ -1,4 +1,4 @@
-import { Button, Space, Statistic } from 'antd';
+import { Button, Divider, Space, Statistic } from 'antd';
 import React, { useState } from 'react';
 import createNotification from '../util/createNotification';
 import useQuery from '../util/useQuery';
@@ -54,6 +54,7 @@ export default function ExampleQuery() {
                 <Statistic title="Readings" value={readings} />
                 <Statistic title="Countries" value={countries} />
                 <Statistic title="States" value={states} />
+                <Divider type="vertical" style={{ height: '5rem' }} />
                 <Statistic
                   title="Total"
                   value={stations + readings + countries + states}
