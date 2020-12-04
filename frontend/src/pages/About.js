@@ -36,7 +36,7 @@ export default function Home() {
         <p>
           WeatherDB is an interactive tool for visualizing real world weather data.
           All of WeatherDB's data is sourced from NOAA's Daily Climatological Survey,
-          A record daily weather recordings from over 115,000 weather stations around the globe.
+          a record of daily weather recordings from over 115,000 weather stations around the globe.
         </p>
       </div>
       <br></br>
@@ -46,14 +46,14 @@ export default function Home() {
       <div className="container">
         <p>
           With WeatherDB, you can finally achieve an accurate portayal of climate trends.
-          From temperature, to wind speed, and even weather phenomena, WeatherDB brings the data
+          From temperature to wind speed and even weather phenomena, WeatherDB brings the data
           to you, allowing you to customize your data selection and visualization.
         </p>
       </div>
         <br></br>
         <div className="container">
           <p>
-            New to WeatherDB are highlights! You can now see highlights from your trend, including
+            New to WeatherDB, highlights! You can now see highlights from your trend, including
             meta-analysis of the data and other key features. The highlights only focus on the important
             topics, so you can gain an accurate understanding of the trend instantly.
           </p>
