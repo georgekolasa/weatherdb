@@ -58,7 +58,7 @@ export const trendQueries = {
   ORDER BY EXTRACT(YEAR from date_taken)`,
 
   TREND6: `SELECT EXTRACT(YEAR FROM DATE_TAKEN), ROUND(AVG(VALUE), 2)
-  FROM READING WHERE ELEMENT = 'TSUN' GROUP BY EXTRACT(YEAR FROM DATE_TAKEN) ORDER BY EXTRACT (YEAR FROM DATE_TAKEN) ASC`,
+  FROM GARMON.READING WHERE ELEMENT = 'TSUN' GROUP BY EXTRACT(YEAR FROM DATE_TAKEN) ORDER BY EXTRACT (YEAR FROM DATE_TAKEN) ASC`,
 
   TEST_TREND: `SELECT * FROM GARMON.REGION`,
 };
@@ -147,10 +147,20 @@ export const trendNames = [
     label: 'Correlation Temperatures, precipitation, and latitude',
     value: 'TREND2',
   },
-  { label: 'Trend 3 name', value: 'TREND3' },
-  { label: 'Trend 4 name', value: 'TREND4' },
-  { label: 'Trend 5 name', value: 'TREND5' },
-  { label: 'Trend 6 name', value: 'TREND6' },
+  {
+    label: 'Average snow depth of X country(s) over the years',
+    value: 'TREND3',
+  },
+  {
+    label: 'Are seasons becoming more extreme over X period of time?',
+    value: 'TREND4',
+  },
+  { label: 'Average wind speed of X country(s) over X years', value: 'TREND5' },
+  {
+    label:
+      'Correlation between average temperature, maximum temperature, and snow depth',
+    value: 'TREND6',
+  },
   {
     label: 'Average daily temperatures in the United Kingdom',
     value: 'TEST_TREND',
