@@ -1,5 +1,4 @@
 export const trendQueries = {
-
   TREND1: `SELECT * FROM 
   (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Max Temp, 0.1 C"
   FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
@@ -60,28 +59,34 @@ export const trendQueries = {
 
   TREND6: `SELECT EXTRACT(YEAR FROM DATE_TAKEN), ROUND(AVG(VALUE), 2)
   FROM READING WHERE ELEMENT = 'TSUN' GROUP BY EXTRACT(YEAR FROM DATE_TAKEN) ORDER BY EXTRACT (YEAR FROM DATE_TAKEN) ASC`,
-  
-  TEST_TREND: ``,
+
+  TEST_TREND: `SELECT * FROM GARMON.REGION`,
 };
 
 export const chartConfigs = {
   TREND1: {
     chartType: 'ScatterChart',
     chartOptions: {
-      title: 'Average Daily Sunshine, Maximum and Minimum Daily Temperatures in Florida, 1965-present',
+      title:
+        'Average Daily Sunshine, Maximum and Minimum Daily Temperatures in Florida, 1965-present',
       hAxis: { format: '####', title: 'Year', minValue: 1990 },
       vAxis: { title: 'Temperature (0.1 C)' },
-      trendlines: { 0: { type: 'linear', color: 'blue' }, 1: {type: 'linear', color: 'red'}, 2: {type: 'linear', color: 'orange'} },
-      legend: {position: 'top'},
+      trendlines: {
+        0: { type: 'linear', color: 'blue' },
+        1: { type: 'linear', color: 'red' },
+        2: { type: 'linear', color: 'orange' },
+      },
+      legend: { position: 'top' },
     },
   },
   TREND2: {
     chartType: 'BubbleChart',
     chartOptions: {
-      title: 'Correlation between Median Maximum Temperatures, Average daily precipitation, and Latitude of countries by region',
+      title:
+        'Correlation between Median Maximum Temperatures, Average daily precipitation, and Latitude of countries by region',
       hAxis: { format: '####', title: 'Median Max Temp (0.1 C)' },
       vAxis: { title: 'Latitude (Absolute value)' },
-      sizeAxis: {minSize: 4, maxSize:12},
+      sizeAxis: { minSize: 4, maxSize: 12 },
     },
   },
   TREND3: {
@@ -114,26 +119,34 @@ export const chartConfigs = {
   TREND6: {
     chartType: 'ScatterChart',
     chartOptions: {
-      title: 'Correlation between average temperature, maximum temperature, and snow depth',
+      title:
+        'Correlation between average temperature, maximum temperature, and snow depth',
       hAxis: { title: 'Average Temperature' },
-      trendlines: { 0: { type: 'linear', color: 'blue' }, 1: {type: 'linear', color: 'red'}},
+      trendlines: {
+        0: { type: 'linear', color: 'blue' },
+        1: { type: 'linear', color: 'red' },
+      },
     },
   },
   TEST_TREND: {
     chartType: 'BubbleChart',
     chartOptions: {
-      title: 'Correlation between Median Maximum Temperatures, Average daily precipitation, and Latitude of countries by region',
+      title:
+        'Correlation between Median Maximum Temperatures, Average daily precipitation, and Latitude of countries by region',
       hAxis: { format: '####', title: 'Median Max Temp' },
       vAxis: { title: 'Latitude (Absolute value)' },
       trendlines: { 0: { type: 'linear', color: 'orange' } },
-      sizeAxis: {minSize: 4, maxSize:12},
+      sizeAxis: { minSize: 4, maxSize: 12 },
     },
   },
 };
 
 export const trendNames = [
   { label: 'Florida average temperatures and sunshine', value: 'TREND1' },
-  { label: 'Correlation Temperatures, precipitation, and latitude', value: 'TREND2' },
+  {
+    label: 'Correlation Temperatures, precipitation, and latitude',
+    value: 'TREND2',
+  },
   { label: 'Trend 3 name', value: 'TREND3' },
   { label: 'Trend 4 name', value: 'TREND4' },
   { label: 'Trend 5 name', value: 'TREND5' },
@@ -147,15 +160,14 @@ export const trendNames = [
 export const highlights = {
   TREND1: [
     "Since 1965, Florida's daily highs and lows have been getting warmer.",
-    "Since 1965, Florida is experiencing less sunshine per day, on average.",
-    "This data was analyzed from 9,143,924 readings taken at 1,744 Florida weather stations."
+    'Since 1965, Florida is experiencing less sunshine per day, on average.',
+    'This data was analyzed from 9,143,924 readings taken at 1,744 Florida weather stations.',
   ],
   TREND2: [
     'This visualisation explores the correlation between precipitation, temperature, and latitude.',
     'Countries are grouped into regions according to the United Nations geoscheme.',
     'The size of each point represents the average daily precipitation of that country.',
-    'Precipitation includes rain, snow, hail, drizzle, sleet, and freezing rain.'
-
+    'Precipitation includes rain, snow, hail, drizzle, sleet, and freezing rain.',
   ],
   TREND3: [],
   TREND4: [],

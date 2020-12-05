@@ -2,7 +2,7 @@ import React from 'react';
 import { useStore } from '../../stores';
 import shallow from 'zustand/shallow';
 import { Chart } from 'react-google-charts';
-import { AlwaysOnLoader } from '../PageLoader';
+import PageLoader, { AlwaysOnLoader } from '../PageLoader';
 import './Visualization.css';
 import CenteredDiv from '../CenteredDiv';
 import useQuery from '../../util/useQuery';
@@ -20,7 +20,7 @@ export default function Visualization() {
 
   return (
     <div className="preview-layout">
-      {(data || loading) && (
+      {data && (
         <Chart
           height="100%"
           width="100%"
@@ -30,6 +30,8 @@ export default function Visualization() {
           loader={<AlwaysOnLoader />}
         />
       )}
+
+      <PageLoader />
 
       {!data && !loading && (
         <CenteredDiv>Make a query to get started!</CenteredDiv>
