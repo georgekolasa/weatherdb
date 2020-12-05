@@ -17,9 +17,13 @@ class Record:
                 self.observations.append(val)
             line = line[8:]
         
-def generateFile(country, output, elementsList, printEveryXFiles):
-    globFilepath = country + '*.dly'
-    input_files = glob(globFilepath)
+def generateFile(countries, output, elementsList, printEveryXFiles):
+    stations = []
+    for c in countries:
+        stations.append(c + '*.dly')
+    input_files = []
+    for station in stations:
+        input_files.extend(glob(station))
     r_file = open(output, 'a')
     j = len(input_files)
     k = 0
@@ -45,7 +49,12 @@ def generateFile(country, output, elementsList, printEveryXFiles):
                         r_file.write(f''''{reading.STATION_ID}','{reading.ELEMENT}',{observation},{date}\n''')
                         l += 1
 
-country = input('Country code (press enter for all dly files in current directory): ')
+countriesList = []
+while True:
+    country = input('Enter country to select (enter to select all / stop with current selection): ')
+    if not country:
+        break
+    countriesList.append(country)
 elementsList = []
 while True:
     element = input('Enter element to select (enter to select all / stop with current selection): ')
@@ -54,4 +63,4 @@ while True:
     elementsList.append(element)
 output = input('Relative filepath to store output (e.g. ../data/out.txt): ')
 lines = int(input('Print status every X files read: '))
-generateFile(country, output, elementsList, lines)
+generateFile(countriesList, output, elementsList, lines)
