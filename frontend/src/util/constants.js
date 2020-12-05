@@ -2,32 +2,39 @@ export const trendQueries = {
 
   TREND1: `SELECT * FROM 
   (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Max Temp, 0.1 C"
-  FROM READING INNER JOIN STATION USING (STATION_ID)
+  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
   WHERE ELEMENT='TMAX' AND STATE='FL'
   GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
   INNER JOIN
   (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Min Temp, 0.1 C"
-  FROM READING INNER JOIN STATION USING (STATION_ID)
+  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
   WHERE ELEMENT='TMIN' AND STATE='FL'
   GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
   USING (YEAR)
   INNER JOIN
   (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Avg total sunshine, minutes"
-  FROM READING INNER JOIN STATION USING (STATION_ID)
+  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
   WHERE ELEMENT='TSUN' AND STATE='FL'
   GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
   USING (YEAR) 
   WHERE YEAR > 1964
   ORDER BY YEAR ASC`,
 
-  TREND2: `SELECT country.name, avg(reading.value) "Temperature"
-  FROM garmon.station 
-  JOIN garmon.reading ON garmon.reading.station_id = garmon.station.station_id
-  JOIN garmon.country ON garmon.country.country = garmon.station.country
-  WHERE element = 'TAVG' 
-  AND EXTRACT(YEAR from date_taken) <= '2020' AND EXTRACT(YEAR from date_taken) > '1996' 
-  AND station.country = 'UK'
-  GROUP BY country.name`, //FIXME
+  TREND2: `SELECT NAME, "Median Max Temp", "Average Latitude", REGION_NAME, "Average Precipitation"
+  FROM (SELECT MEDIAN(VALUE) AS "Median Max Temp", COUNTRY
+  FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
+  WHERE ELEMENT = 'TMAX' GROUP BY COUNTRY
+  ) INNER JOIN (
+  SELECT ROUND(AVG(VALUE), 2) AS "Average Precipitation", COUNTRY
+  FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
+  WHERE ELEMENT = 'PRCP' GROUP BY COUNTRY
+  ) USING (COUNTRY) INNER JOIN (
+  SELECT ABS(ROUND(MEDIAN(LATITUDE), 2)) AS "Average Latitude", COUNTRY
+  FROM GARMON.STATION GROUP BY COUNTRY) 
+  USING (COUNTRY) INNER JOIN 
+  (SELECT NAME, REGION_NAME, REGION, COUNTRY 
+  FROM GARMON.COUNTRY INNER JOIN GARMON.REGION USING (REGION)) 
+  USING (COUNTRY)`,
 
   TREND3: `SELECT avg(value) "Snow Depth", EXTRACT(YEAR from date_taken) "Year"
   FROM garmon.station JOIN garmon.reading ON garmon.reading.station_id = garmon.station.station_id
@@ -69,12 +76,12 @@ export const chartConfigs = {
     },
   },
   TREND2: {
-    chartType: 'ScatterChart',
+    chartType: 'BubbleChart',
     chartOptions: {
-      title: 'Temperatures of x country(s) over past X years',
-      hAxis: { format: '####', title: 'Year' },
-      vAxis: { title: 'Temperature (0.1 C)' },
-      trendlines: { 0: { type: 'linear', color: 'red' } },
+      title: 'Correlation between Median Maximum Temperatures, Average daily precipitation, and Latitude of countries by region',
+      hAxis: { format: '####', title: 'Median Max Temp (0.1 C)' },
+      vAxis: { title: 'Latitude (Absolute value)' },
+      sizeAxis: {minSize: 4, maxSize:12},
     },
   },
   TREND3: {
@@ -113,20 +120,20 @@ export const chartConfigs = {
     },
   },
   TEST_TREND: {
-    chartType: 'ScatterChart',
+    chartType: 'BubbleChart',
     chartOptions: {
-      title: 'Average Daily Temperatures in the United Kingdom, 1975 - Present',
-      hAxis: { format: '####', title: 'Year', minValue: 1975 },
-      vAxis: { title: 'Temperature (0.1 C)' },
+      title: 'Correlation between Median Maximum Temperatures, Average daily precipitation, and Latitude of countries by region',
+      hAxis: { format: '####', title: 'Median Max Temp' },
+      vAxis: { title: 'Latitude (Absolute value)' },
       trendlines: { 0: { type: 'linear', color: 'orange' } },
-      legend: 'none',
+      sizeAxis: {minSize: 4, maxSize:12},
     },
   },
 };
 
 export const trendNames = [
   { label: 'Florida average temperatures and sunshine', value: 'TREND1' },
-  { label: 'Trend 2 name', value: 'TREND2' },
+  { label: 'Correlation Temperatures, precipitation, and latitude', value: 'TREND2' },
   { label: 'Trend 3 name', value: 'TREND3' },
   { label: 'Trend 4 name', value: 'TREND4' },
   { label: 'Trend 5 name', value: 'TREND5' },
@@ -143,7 +150,13 @@ export const highlights = {
     "Since 1965, Florida is experiencing less sunshine per day, on average.",
     "This data was analyzed from 9,143,924 readings taken at 1,744 Florida weather stations."
   ],
-  TREND2: [],
+  TREND2: [
+    'This visualisation explores the correlation between precipitation, temperature, and latitude.',
+    'Countries are grouped into regions according to the United Nations geoscheme.',
+    'The size of each point represents the average daily precipitation of that country.',
+    'Precipitation includes rain, snow, hail, drizzle, sleet, and freezing rain.'
+
+  ],
   TREND3: [],
   TREND4: [],
   TREND5: [],
