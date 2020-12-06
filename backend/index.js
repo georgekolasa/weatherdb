@@ -35,13 +35,16 @@ async function bootstrap() {
       res.status(504).send('Connection to the Database has been lost!');
     } else {
       try {
-        console.log(query);
         let queryResponse = await connection.execute(query);
 
         const { metaData, rows } = queryResponse;
+        console.log('RAW ROWS:', rows);
+
         const cols = metaData.map((col) => col.name);
 
         const ret = [cols, ...rows];
+
+        console.log('RETURN VALUE:', ret);
 
         res.send(ret);
       } catch (error) {
