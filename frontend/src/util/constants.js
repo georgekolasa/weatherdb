@@ -125,7 +125,7 @@ export const trendQueries = {
   GROUP BY EXTRACT(YEAR FROM DATE_TAKEN)
   ORDER BY EXTRACT(YEAR FROM DATE_TAKEN) ASC`,
 
-  TEST_TREND: `SELECT "Max Temperature", "Snowfall", "Snowdepth" FROM (
+  TREND7: `SELECT "Max Temperature", "Snowfall", "Snowdepth" FROM (
     SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE)) as "Max Temperature", COUNTRY
     FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
     WHERE ELEMENT = 'TMAX' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (12, 1, 2) AND COUNTRY='IC'
@@ -142,7 +142,7 @@ export const trendQueries = {
       GROUP BY EXTRACT(YEAR FROM DATE_TAKEN), COUNTRY
   ) USING (YEAR, COUNTRY)`,
 
-  TEST_TREND_OLD: `SELECT * FROM 
+  TREND7_OLD: `SELECT * FROM 
   (SELECT EXTRACT(YEAR FROM DATE_TAKEN) "Year", AVG(VALUE) "Temperature"
   FROM GARMON.STATION JOIN GARMON.READING ON GARMON.READING.STATION_ID = GARMON.STATION.STATION_ID
   WHERE ELEMENT = 'TMAX' 
@@ -235,13 +235,13 @@ export const chartConfigs = {
       trendlines: { 0: { type: 'linear', color: 'red' } },
     },
   },
-  TEST_TREND: {
+  TREND7: {
     chartType: 'ScatterChart',
     chartOptions: {
       title:
         'Correlation of Average Max Temperatures and Snowfall/Snowdepth in Iceland',
       hAxis: { format: '####', title: 'Average Max Temperature (0.1 C)' },
-      vAxis: { title: 'Depth/Fall (unit)' },
+      vAxis: { title: 'Depth/Fall (unit)', viewWindow: { max: 1500 } },
       trendlines: {
         0: { type: 'linear', color: 'orange' },
         1: { type: 'linear', color: 'blue' },
@@ -274,7 +274,7 @@ export const trendNames = [
   },
   {
     label: 'Average Max Temperatures and Snowfall/Snowdepth',
-    value: 'TEST_TREND',
+    value: 'TREND7',
   },
 ];
 
@@ -304,9 +304,9 @@ export const highlights = {
   ],
   TREND5: [],
   TREND6: [],
-  TEST_TREND: [
+  TREND7: [
     'This visualization shows how the trends between snowfall and snowdepth are correlated in the context of average max temperatures.',
     'As the average max temperature increases, snowfall and snowdepth decreases',
-    'This data is only representing Iceland, which is why the temperature cap is not very high in relation to other trend queries',
+    'This data is only representing Iceland from December - February, which is why the temperature cap is not very high in relation to other trend queries',
   ],
 };
