@@ -128,17 +128,17 @@ export const trendQueries = {
   TREND7: `SELECT "Max Temperature", "Snowfall", "Snowdepth" FROM (
     SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE)) as "Max Temperature", COUNTRY
     FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
-    WHERE ELEMENT = 'TMAX' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (12, 1, 2) AND COUNTRY='IC'
+    WHERE ELEMENT = 'TMAX' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (10,11,12, 1, 2,3,4) AND COUNTRY='IC'
     GROUP BY EXTRACT(YEAR FROM DATE_TAKEN), COUNTRY
   ) INNER JOIN (
       SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, SUM(VALUE) as "Snowfall", COUNTRY
       FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
-      WHERE ELEMENT = 'SNOW' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (12, 1, 2) AND COUNTRY='IC'
+      WHERE ELEMENT = 'SNOW' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (10,11,12, 1, 2,3,4) AND COUNTRY='IC'
       GROUP BY EXTRACT(YEAR FROM DATE_TAKEN), COUNTRY
   ) USING (YEAR, COUNTRY) INNER JOIN (
-      SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE)) as "Snowdepth", COUNTRY
+      SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE))*10 as "Snowdepth", COUNTRY
       FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
-      WHERE ELEMENT = 'SNWD' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (12, 1, 2) AND COUNTRY='IC'
+      WHERE ELEMENT = 'SNWD' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (10,11,12, 1, 2,3,4) AND COUNTRY='IC'
       GROUP BY EXTRACT(YEAR FROM DATE_TAKEN), COUNTRY
   ) USING (YEAR, COUNTRY)`,
 
@@ -240,11 +240,11 @@ export const chartConfigs = {
     chartOptions: {
       title:
         'Correlation of Average Max Temperatures and Snowfall/Snowdepth in Iceland',
-      hAxis: { format: '####', title: 'Average Max Temperature (0.1 C)' },
-      vAxis: { title: 'Depth/Fall (unit)', viewWindow: { max: 1500 } },
+      hAxis: { format: '####', title: 'Average Max Temperature (0.1 C)', viewWindow: {min: 20} },
+      vAxis: { title: 'Depth/Fall (unit)', viewWindow: { max: 3000 } },
       trendlines: {
-        0: { type: 'linear', color: 'orange' },
-        1: { type: 'linear', color: 'blue' },
+        0: { type: 'linear', color: 'blue' },
+        1: { type: 'linear', color: 'red' },
       },
     },
   },
@@ -307,6 +307,6 @@ export const highlights = {
   TREND7: [
     'This visualization shows how the trends between snowfall and snowdepth are correlated in the context of average max temperatures.',
     'As the average max temperature increases, snowfall and snowdepth decreases',
-    'This data is only representing Iceland from December - February, which is why the temperature cap is not very high in relation to other trend queries',
+    'This data is only representing Iceland from October - April, which is why the temperature cap is not very high in relation to other trend queries',
   ],
 };
