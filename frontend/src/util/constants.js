@@ -35,11 +35,37 @@ export const trendQueries = {
   FROM GARMON.COUNTRY INNER JOIN GARMON.REGION USING (REGION)) 
   USING (COUNTRY)`,
 
-  TREND3: `SELECT avg(value) "Snow Depth", EXTRACT(YEAR from date_taken) "Year"
-  FROM garmon.station JOIN garmon.reading ON garmon.reading.station_id = garmon.station.station_id
-  WHERE element = 'SNWD' AND country = 'IC'
-  GROUP BY EXTRACT(YEAR from date_taken)
-  ORDER BY EXTRACT(YEAR from date_taken)`, //FIXME: flipped axis
+  TREND3: `SELECT * FROM
+  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Europe"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'PRCP' AND REGION IN ('NE', 'WE', 'SE', 'EE')
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    INNER JOIN
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "North America"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'PRCP' AND REGION = 'NM'
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    USING (YEAR) INNER JOIN
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Central/Eastern Asia"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'PRCP' AND REGION IN ('EA', 'CA', 'SEA')
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    USING (YEAR) INNER JOIN
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "South America"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'PRCP' AND REGION = 'SM'
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    USING (YEAR) INNER JOIN
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Northern Africa/Southwest Asia"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'PRCP' AND REGION IN ('WA', 'NF')
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    USING (YEAR)`,
 
   TREND4: `SELECT avg(value) "Temperature", EXTRACT(YEAR from date_taken) "Year"
   FROM garmon.station JOIN garmon.reading ON garmon.reading.station_id = garmon.station.station_id
@@ -58,9 +84,31 @@ export const trendQueries = {
   ORDER BY EXTRACT(YEAR from date_taken)`,
 
   TREND6: `SELECT EXTRACT(YEAR FROM DATE_TAKEN), ROUND(AVG(VALUE), 2)
-  FROM GARMON.READING WHERE ELEMENT = 'TSUN' GROUP BY EXTRACT(YEAR FROM DATE_TAKEN) ORDER BY EXTRACT (YEAR FROM DATE_TAKEN) ASC`,
+  FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
+  WHERE ELEMENT = 'SNWD'
+  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN)
+  ORDER BY EXTRACT(YEAR FROM DATE_TAKEN) ASC`,
 
-  TEST_TREND: `SELECT * FROM GARMON.REGION`,
+  TEST_TREND: 
+  `SELECT * FROM 
+  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS ""
+  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
+  WHERE ELEMENT='TMAX' AND STATE='FL'
+  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
+  INNER JOIN
+  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(MEDIAN(VALUE), 2) AS "Min Temp, 0.1 C"
+  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
+  WHERE ELEMENT='TMIN' AND STATE='FL'
+  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
+  USING (YEAR)
+  INNER JOIN
+  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(MEDIAN(VALUE), 2) AS "Avg total sunshine, minutes"
+  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
+  WHERE ELEMENT='TSUN' AND STATE='FL'
+  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
+  USING (YEAR) 
+  WHERE YEAR > 1964
+  ORDER BY YEAR ASC`,
 };
 
 export const chartConfigs = {
@@ -93,10 +141,18 @@ export const chartConfigs = {
   TREND3: {
     chartType: 'ScatterChart',
     chartOptions: {
-      title: 'Average snow depth of X country(s) over the years',
-      vAxis: { format: '####', title: 'Year' },
-      hAxis: { title: 'Temperature (0.1 C)' },
-      trendlines: { 0: { type: 'linear', color: 'red' } },
+      title:
+        'Average Annual Precipitation, by Region',
+      hAxis: { title: 'Year', format: '####'},
+      vAxis: {title: 'Average Precipitation (0.1 mm daily)', viewWindow: {max: 85}},
+      pointSize: 4,
+      trendlines: {
+        0: { type: 'linear', color: 'blue' },
+        1: { type: 'linear', color: 'red' },
+        2: { type: 'linear', color: 'orange' },
+        3: {type: 'linear', color: 'green'},
+        4: {type: 'linear', color: 'purple'}
+      },
     },
   },
   TREND4: {
@@ -120,17 +176,14 @@ export const chartConfigs = {
   TREND6: {
     chartType: 'ScatterChart',
     chartOptions: {
-      title:
-        'Correlation between average temperature, maximum temperature, and snow depth',
-      hAxis: { title: 'Average Temperature' },
-      trendlines: {
-        0: { type: 'linear', color: 'blue' },
-        1: { type: 'linear', color: 'red' },
-      },
+      title: 'Average snow depth of X country(s) over the years',
+      hAxis: { format: '####', title: 'Year' },
+      vAxis: { title: 'Temperature (0.1 C)' },
+      trendlines: { 0: { type: 'linear', color: 'red' } },
     },
   },
   TEST_TREND: {
-    chartType: 'BubbleChart',
+    chartType: 'LineChart',
     chartOptions: {
       title:
         'Correlation between Median Maximum Temperatures, Average daily precipitation, and Latitude of countries by region',
@@ -149,18 +202,21 @@ export const trendNames = [
     value: 'TREND2',
   },
   {
-    label: 'Average snow depth of X country(s) over the years',
+    label:
+      'Regional Annual Precipitation',
     value: 'TREND3',
   },
   {
-    label: 'Are seasons becoming more extreme over X period of time?',
+    label: 'Average snow depth of X country(s) over the years',
     value: 'TREND4',
   },
-  { label: 'Average wind speed of X country(s) over X years', value: 'TREND5' },
   {
-    label:
-      'Correlation between average temperature, maximum temperature, and snow depth',
-    value: 'TREND6',
+    label: 'Are seasons becoming more extreme over X period of time?',
+    value: 'TREND5',
+  },
+  { 
+    label: 'Average wind speed of X country(s) over X years',
+    value: 'TREND6' 
   },
   {
     label: 'Average daily temperatures in the United Kingdom',
@@ -183,7 +239,12 @@ export const highlights = {
 
 
   ],
-  TREND3: [],
+  TREND3: [
+    'This visualisation shows how precipitation is changing in various regions.',
+    'Countries are grouped into regions according to the United Nations geoscheme.',
+    'While most areas show an increase in precipitation, some are receiving less precipitation each year, on average.',
+    'Precipitation includes rain, snow, hail, drizzle, sleet, and freezing rain.'
+  ],
   TREND4: [],
   TREND5: [],
   TREND6: [],
