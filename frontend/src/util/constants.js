@@ -54,9 +54,9 @@ export const trendQueries = {
     GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
     ORDER BY YEAR ASC)
     USING (YEAR) INNER JOIN
-    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "South America"
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Central/South America"
     FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
-    WHERE ELEMENT = 'PRCP' AND REGION = 'SM'
+    WHERE ELEMENT = 'PRCP' AND REGION IN ('CM', 'SM')
     GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
     ORDER BY YEAR ASC)
     USING (YEAR) INNER JOIN
@@ -65,15 +65,51 @@ export const trendQueries = {
     WHERE ELEMENT = 'PRCP' AND REGION IN ('WA', 'NF')
     GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
     ORDER BY YEAR ASC)
+    USING (YEAR) INNER JOIN
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Global"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'PRCP'
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
     USING (YEAR)`,
 
-  TREND4: `SELECT avg(value) "Temperature", EXTRACT(YEAR from date_taken) "Year"
-  FROM garmon.station JOIN garmon.reading ON garmon.reading.station_id = garmon.station.station_id
-  WHERE element = 'TAVG' 
-  AND EXTRACT(MONTH from date_taken) >= '01' AND EXTRACT(MONTH from date_taken) <= '03' 
-  AND EXTRACT(YEAR from date_taken) <= '2020' AND EXTRACT(YEAR from date_taken) >= '2015' 
-  GROUP BY EXTRACT(YEAR from date_taken)
-  ORDER BY EXTRACT(YEAR from date_taken)`, //FIXME: flipped axis
+  TREND4: `SELECT * FROM
+  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Europe"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'TMAX' AND REGION IN ('NE', 'WE', 'SE', 'EE')
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    INNER JOIN
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "North America"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'TMAX' AND REGION = 'NM'
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    USING (YEAR) INNER JOIN
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Central/Eastern Asia"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'TMAX' AND REGION IN ('EA', 'CA', 'SEA')
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    USING (YEAR) INNER JOIN
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Central/South America"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'TMAX' AND REGION IN ('CM', 'SM')
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    USING (YEAR) INNER JOIN
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Northern Africa/Southwest Asia"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'TMAX' AND REGION IN ('WA', 'NF')
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    USING (YEAR) INNER JOIN
+    (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS "Global"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID) INNER JOIN COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'TMAX'
+    GROUP BY EXTRACT (YEAR FROM DATE_TAKEN)
+    ORDER BY YEAR ASC)
+    USING (YEAR)`,
 
   TREND5: `SELECT avg(value) "Wind Speed", EXTRACT(YEAR from date_taken) "Year"
   FROM garmon.station JOIN garmon.reading ON garmon.reading.station_id = garmon.station.station_id
@@ -90,25 +126,13 @@ export const trendQueries = {
   ORDER BY EXTRACT(YEAR FROM DATE_TAKEN) ASC`,
 
   TEST_TREND: 
-  `SELECT * FROM 
-  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE), 2) AS ""
-  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
-  WHERE ELEMENT='TMAX' AND STATE='FL'
-  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
-  INNER JOIN
-  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(MEDIAN(VALUE), 2) AS "Min Temp, 0.1 C"
-  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
-  WHERE ELEMENT='TMIN' AND STATE='FL'
-  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
-  USING (YEAR)
-  INNER JOIN
-  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(MEDIAN(VALUE), 2) AS "Avg total sunshine, minutes"
-  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
-  WHERE ELEMENT='TSUN' AND STATE='FL'
-  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
-  USING (YEAR) 
-  WHERE YEAR > 1964
-  ORDER BY YEAR ASC`,
+  `SELECT avg(value) "Temperature", EXTRACT(YEAR from date_taken) "Year"
+  FROM garmon.station JOIN garmon.reading ON garmon.reading.station_id = garmon.station.station_id
+  WHERE element = 'TAVG' 
+  AND EXTRACT(MONTH from date_taken) >= '01' AND EXTRACT(MONTH from date_taken) <= '03' 
+  AND EXTRACT(YEAR from date_taken) <= '2020' AND EXTRACT(YEAR from date_taken) >= '2015' 
+  GROUP BY EXTRACT(YEAR from date_taken)
+  ORDER BY EXTRACT(YEAR from date_taken)`,
 };
 
 export const chartConfigs = {
@@ -146,22 +170,33 @@ export const chartConfigs = {
       hAxis: { title: 'Year', format: '####'},
       vAxis: {title: 'Average Precipitation (0.1 mm daily)', viewWindow: {max: 85}},
       pointSize: 4,
+      colors: ['blue', 'red', 'orange', 'green', 'purple', 'LightCoral'],
       trendlines: {
         0: { type: 'linear', color: 'blue' },
         1: { type: 'linear', color: 'red' },
         2: { type: 'linear', color: 'orange' },
         3: {type: 'linear', color: 'green'},
-        4: {type: 'linear', color: 'purple'}
+        4: {type: 'linear', color: 'purple'},
+        5: {type: 'linear', color: 'LightCoral'}
       },
     },
   },
   TREND4: {
     chartType: 'ScatterChart',
     chartOptions: {
-      title: 'Are seasons becoming more extreme over X period of time?',
-      vAxis: { format: '####', title: 'Year' },
-      hAxis: { title: 'Temperature (0.1 C)' },
-      trendlines: { 0: { type: 'linear', color: 'red' } },
+      title: 'Median Daily Maximum Temperature, by Region',
+      hAxis: { format: '####', title: 'Year' },
+      vAxis: { title: 'Temperature (0.1 C)', viewWindow: {min: 100} },
+      pointSize: 4,
+      colors: ['blue', 'red', 'orange', 'green', 'purple', 'LightCoral'],
+      trendlines:  {
+        0: { type: 'linear', color: 'blue' },
+        1: { type: 'linear', color: 'red' },
+        2: { type: 'linear', color: 'orange' },
+        3: {type: 'linear', color: 'green'},
+        4: {type: 'linear', color: 'purple'},
+        5: {type: 'linear', color: 'LightCoral'}
+      },
     },
   },
   TREND5: {
@@ -183,14 +218,13 @@ export const chartConfigs = {
     },
   },
   TEST_TREND: {
-    chartType: 'LineChart',
+    chartType: 'ScatterChart',
     chartOptions: {
       title:
-        'Correlation between Median Maximum Temperatures, Average daily precipitation, and Latitude of countries by region',
-      hAxis: { format: '####', title: 'Median Max Temp' },
-      vAxis: { title: 'Latitude (Absolute value)' },
+        'Are seasons becoming more extreme?',
+      hAxis: { format: '####', title: 'Year' },
+      vAxis: { title: 'Temperature (0.1 C)' },
       trendlines: { 0: { type: 'linear', color: 'orange' } },
-      sizeAxis: { minSize: 4, maxSize: 12 },
     },
   },
 };
@@ -207,19 +241,19 @@ export const trendNames = [
     value: 'TREND3',
   },
   {
-    label: 'Average snow depth of X country(s) over the years',
+    label: 'Median Temperatures by Region',
     value: 'TREND4',
   },
   {
-    label: 'Are seasons becoming more extreme over X period of time?',
+    label: 'Average wind speed of X country(s) over X years',
     value: 'TREND5',
   },
   { 
-    label: 'Average wind speed of X country(s) over X years',
+    label: 'Average snow depth of X country(s) over the years',
     value: 'TREND6' 
   },
   {
-    label: 'Average daily temperatures in the United Kingdom',
+    label: 'Are seasons becoming more extreme over X period of time?',
     value: 'TEST_TREND',
   },
 ];
@@ -245,7 +279,12 @@ export const highlights = {
     'While most areas show an increase in precipitation, some are receiving less precipitation each year, on average.',
     'Precipitation includes rain, snow, hail, drizzle, sleet, and freezing rain.'
   ],
-  TREND4: [],
+  TREND4: [
+    'This visualisation shows how the median maximum daily temperature is changing in various regions.',
+    'Countries are grouped into regions according to the United Nations geoscheme.',
+    'While most areas show an increase in median maximum daily temperature, some are receiving less precipitation each year, on average.',
+    'The median was chosen to be more reflective of trends, and to reduce skew from outliers.'
+  ],
   TREND5: [],
   TREND6: [],
   TEST_TREND: [
