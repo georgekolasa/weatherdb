@@ -1,6 +1,7 @@
 import sys
 from glob import glob
 
+
 class Record:
     def __init__(self, line):
         self.STATION_ID = line[0:11].strip()
@@ -16,7 +17,8 @@ class Record:
             else:
                 self.observations.append(val)
             line = line[8:]
-        
+
+
 def generateFile(countries, output, elementsList, printEveryXFiles):
     stations = []
     for c in countries:
@@ -35,6 +37,8 @@ def generateFile(countries, output, elementsList, printEveryXFiles):
         f = open(file)
         for line in f:
             reading = Record(line)
+            if reading.YEAR not in range(1950, 2001):
+                continue
             if (reading.ELEMENT in elementsList) or not elementsList:
                 for i in range(len(reading.observations)):
                     if reading.observations[i] is None:
@@ -44,20 +48,25 @@ def generateFile(countries, output, elementsList, printEveryXFiles):
                     day = str(i+1)
                     if i < 9:
                         day = '0' + day
-                    date = '\'' + str(reading.YEAR) + '-' + str(reading.MONTH) + '-' + day + '\''
+                    date = '\'' + str(reading.YEAR) + '-' + \
+                        str(reading.MONTH) + '-' + day + '\''
                     if observation != 'NULL':
-                        r_file.write(f''''{reading.STATION_ID}','{reading.ELEMENT}',{observation},{date}\n''')
+                        r_file.write(
+                            f''''{reading.STATION_ID}','{reading.ELEMENT}',{observation},{date}\n''')
                         l += 1
+
 
 countriesList = []
 while True:
-    country = input('Enter country to select (enter to select all / stop with current selection): ')
+    country = input(
+        'Enter country to select (enter to select all / stop with current selection): ')
     if not country:
         break
     countriesList.append(country)
 elementsList = []
 while True:
-    element = input('Enter element to select (enter to select all / stop with current selection): ')
+    element = input(
+        'Enter element to select (enter to select all / stop with current selection): ')
     if not element:
         break
     elementsList.append(element)
