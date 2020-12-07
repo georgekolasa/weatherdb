@@ -60,6 +60,16 @@ export default function QueryForm() {
     }
   }
 
+  console.log('STATE', dateRange);
+  console.log(
+    'TREND RETURN',
+    dateRange &&
+      trendQueries['TREND1'](
+        dateRange[0].format('YYYY'),
+        dateRange[1].format('YYYY')
+      )
+  );
+
   function handleChange(e) {
     const trendName = e;
     setDateRange(trendDateRanges[trendName]);
@@ -92,7 +102,17 @@ export default function QueryForm() {
       console.log(trendName);
       const chartType = chartConfigs[trendName].chartType;
       const chartOptions = chartConfigs[trendName].chartOptions;
-      const query = trendQueries[trendName];
+
+      let query = '';
+
+      if (dateRange) {
+        query = trendQueries[trendName](
+          dateRange[0].format('YYYY'),
+          dateRange[1].format('YYYY')
+        );
+      } else {
+        query = trendQueries[trendName]();
+      }
 
       await selectQuery(query);
       setChartType(chartType);
