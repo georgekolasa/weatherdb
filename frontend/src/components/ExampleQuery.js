@@ -10,6 +10,7 @@ export default function ExampleQuery() {
   const [stations, setStations] = useState();
   const [readings, setReadings] = useState();
   const [countries, setCountries] = useState();
+  const [regions, setRegions] = useState();
   const [states, setStates] = useState();
   const [queryString, setQueryString] = useState('');
 
@@ -19,12 +20,12 @@ export default function ExampleQuery() {
     const { response, query } = await countQueries();
 
     if (response.status === 200) {
-      console.log(response);
-      const { stations, readings, states, countries } = response.data;
+      const { stations, readings, states, countries, regions } = response.data;
 
       setStations(stations);
       setReadings(readings);
       setCountries(countries);
+      setRegions(regions);
       setStates(states);
 
       setQueryString(query);
@@ -53,11 +54,12 @@ export default function ExampleQuery() {
                 <Statistic center title="Stations" value={stations} />
                 <Statistic title="Readings" value={readings} />
                 <Statistic title="Countries" value={countries} />
+                <Statistic title="Regions" value={regions} />
                 <Statistic title="States" value={states} />
                 <Divider type="vertical" style={{ height: '5rem' }} />
                 <Statistic
                   title="Total"
-                  value={stations + readings + countries + states}
+                  value={stations + readings + countries + regions + states}
                 />
               </Space>
             </div>

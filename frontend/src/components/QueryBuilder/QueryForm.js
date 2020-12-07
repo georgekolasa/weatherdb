@@ -14,8 +14,6 @@ import useQuery from '../../util/useQuery';
 import createNotification from '../../util/createNotification';
 import { DatePicker } from 'antd';
 
-import moment from 'moment';
-
 const { RangePicker } = DatePicker;
 
 export default function QueryForm() {
@@ -24,8 +22,9 @@ export default function QueryForm() {
   const [selected, setSelected] = useState();
   const [dateRange, setDateRange] = useState();
 
-  const { clear, setChartOptions, setChartType, loading } = useStore(
+  const { hasData, clear, setChartOptions, setChartType, loading } = useStore(
     (state) => ({
+      hasData: !!state.queryData,
       clear: state.clear,
       setChartType: state.setChartType,
       setChartOptions: state.setChartOptions,
@@ -35,40 +34,35 @@ export default function QueryForm() {
   );
 
   function handleDateRangeChange(e) {
-    console.log(e);
+    setDateRange(e);
   }
 
   function getQueryInteractable(trend) {
-    switch (trend) {
-      case 'TREND1': {
-        return (
-          <div>
-            <h4>Year Range</h4>
-            <RangePicker
-              name="date-picker"
-              onChange={handleDateRangeChange}
-              value={dateRange}
-              picker="year"
-            />
-          </div>
-        );
-      }
-
-      default: {
-        return null;
-      }
+    if (trend && trendDateRanges[trend]) {
+      return (
+        <div>
+          <h4>Year Range</h4>
+          <RangePicker
+            name="date-picker"
+            onChange={handleDateRangeChange}
+            value={dateRange}
+            picker="year"
+          />
+        </div>
+      );
+    } else {
+      return null;
     }
   }
 
-  console.log('STATE', dateRange);
-  console.log(
-    'TREND RETURN',
-    dateRange &&
-      trendQueries['TREND1'](
-        dateRange[0].format('YYYY'),
-        dateRange[1].format('YYYY')
-      )
-  );
+  function handleClear() {
+    setSelected();
+    setDateRange();
+
+    if (hasData) {
+      clear();
+    }
+  }
 
   function handleChange(e) {
     const trendName = e;
@@ -76,9 +70,18 @@ export default function QueryForm() {
     setSelected(trendName);
   }
   function showQuery() {
+    if (!selected || !dateRange) {
+      return;
+    }
+
     const content = {
       message: 'SQL Query used for this trend',
-      description: trendQueries[selected],
+      description: dateRange
+        ? trendQueries[selected](
+            dateRange[0].format('YYYY'),
+            dateRange[1].format('YYYY')
+          )
+        : trendQueries[selected](),
       duration: 0,
     };
     createNotification(content);
@@ -146,9 +149,12 @@ export default function QueryForm() {
           </div>
 
           {selected && getQueryInteractable(selected)}
+
+          {!hasData && selected && (
+            <b>Click 'Run' to send the query to the server!</b>
+          )}
         </Space>
       </Form>
-      <br></br>
       <br></br>
       <div className="highlights">
         <h4>Highlights</h4>
@@ -156,10 +162,17 @@ export default function QueryForm() {
       </div>
       <div className="sidebar-footer">
         <div className="content">
-          <Button loading={loading} onClick={handleSubmit}>
-            Run
+          <div>
+            <Button onClick={showQuery} disabled={!selected}>
+              See Query
+            </Button>
+            <Button loading={loading} onClick={handleSubmit}>
+              Run
+            </Button>
+          </div>
+          <Button disabled={!selected || loading} onClick={handleClear}>
+            Clear
           </Button>
-          <Button onClick={showQuery}>See Query</Button>
         </div>
       </div>
     </React.Fragment>

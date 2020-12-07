@@ -34,7 +34,7 @@ export default function Visualization() {
       <PageLoader />
 
       {!data && !loading && (
-        <CenteredDiv>Make a query to get started!</CenteredDiv>
+        <CenteredDiv>Select a trend to get started!</CenteredDiv>
       )}
     </div>
   );

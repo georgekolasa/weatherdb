@@ -1,8 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const oracledb = require('oracledb');
-const pingme = require('./endpoints/pingme');
-const select = require('./endpoints/select');
 const validateQuery = require('./middleware/validateQuery');
 
 require('dotenv').config();
@@ -25,8 +23,6 @@ async function bootstrap() {
   app.listen(port, () =>
     console.log(`Express server listening to http://localhost:${port}`)
   );
-
-  app.get('/pingme', pingme);
 
   app.post('/api/select', validateQuery, async (req, res) => {
     const { query } = req.body;
@@ -59,20 +55,15 @@ async function bootstrap() {
     if (!connection) {
       res.status(504).send('Connection to the Database has been lost!');
     } else {
-      console.log('here');
       try {
         let queryResponse = await connection.execute(query);
 
         console.log(queryResponse);
         const { metaData, rows } = queryResponse;
 
-        // console.log(metaData, rows);
-
         const cols = metaData.map((col) => col.name);
 
         const countRow = rows[0];
-
-        console.log(cols);
 
         let counts = {};
         for (let i = 0; i < cols.length; i++) {

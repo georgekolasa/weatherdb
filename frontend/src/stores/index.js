@@ -28,7 +28,7 @@ export const useStore = create((set) => ({
   setChartType: (chartType) =>
     set((state) => ({ ...state, chartType: chartType })),
 
-  clear: () => ({ ...defaultState }),
+  clear: () => set(() => defaultState),
 
   // it will toggle by default, if you pass in a new status then it will just take
   // that instead of toggling
