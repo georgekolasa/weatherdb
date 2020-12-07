@@ -113,13 +113,38 @@ export const trendQueries = {
     ORDER BY YEAR ASC)
     USING (YEAR)`,
 
-  TREND5: `SELECT "Year", "TSUN" FROM (SELECT AVG(VALUE) "TSUN", EXTRACT(YEAR FROM DATE_TAKEN) "Year"
-  FROM GARMON.STATION JOIN GARMON.READING ON GARMON.READING.STATION_ID = GARMON.STATION.STATION_ID
-  WHERE ELEMENT = 'TSUN'
-  AND EXTRACT(YEAR FROM DATE_TAKEN) <= 2018 AND EXTRACT(YEAR FROM DATE_TAKEN) >= 1995 
-  AND country = 'US'
-  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN)
-  ORDER BY EXTRACT(YEAR FROM DATE_TAKEN))`, // TODO: FIXME: BROKEN, I changed to TSUN so it is functional
+  TREND5: `SELECT * FROM 
+  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(MEDIAN(VALUE)) AS "Spring"
+  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
+  INNER JOIN COUNTRY USING (COUNTRY)
+  WHERE ELEMENT='TMAX' AND EXTRACT(YEAR FROM DATE_TAKEN) > 1900 AND 
+  EXTRACT(MONTH FROM DATE_TAKEN) IN (3,4,5) AND REGION IN ('NE', 'EE')
+  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
+  INNER JOIN
+  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(MEDIAN(VALUE)) AS "Summer"
+  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
+  INNER JOIN COUNTRY USING (COUNTRY)
+  WHERE ELEMENT='TMAX' AND EXTRACT(YEAR FROM DATE_TAKEN) > 1900 AND 
+  EXTRACT(MONTH FROM DATE_TAKEN) IN (6,7,8) AND REGION IN ('NE', 'EE')
+  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
+  USING (YEAR)
+  INNER JOIN
+  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(MEDIAN(VALUE)) AS "Fall"
+  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
+  INNER JOIN COUNTRY USING (COUNTRY)
+  WHERE ELEMENT='TMAX' AND EXTRACT(YEAR FROM DATE_TAKEN) > 1900 AND 
+  EXTRACT(MONTH FROM DATE_TAKEN) IN (9,10,11) AND REGION IN ('NE', 'EE')
+  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
+  USING (YEAR) 
+  INNER JOIN
+  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(MEDIAN(VALUE)) AS "Winter"
+  FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
+  INNER JOIN COUNTRY USING (COUNTRY)
+  WHERE ELEMENT='TMAX' AND EXTRACT(YEAR FROM DATE_TAKEN) > 1900 AND 
+  EXTRACT(MONTH FROM DATE_TAKEN) IN (12,1,2) AND REGION IN ('NE', 'EE')
+  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
+  USING (YEAR)
+  ORDER BY YEAR ASC`,
 
   TREND6: `SELECT EXTRACT(YEAR FROM DATE_TAKEN), ROUND(AVG(VALUE), 2)
   FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
@@ -128,19 +153,30 @@ export const trendQueries = {
   ORDER BY EXTRACT(YEAR FROM DATE_TAKEN) ASC`, // TODO
 
   TREND7: `SELECT "Max Temperature", "Snowfall", "Snowdepth" FROM (
-    SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE)) as "Max Temperature", COUNTRY
-    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
-    WHERE ELEMENT = 'TMAX' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (10,11,12, 1, 2,3,4) AND COUNTRY='IC'
+    SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR,
+    ROUND(AVG(VALUE)) as "Max Temperature", COUNTRY
+    FROM GARMON.STATION INNER JOIN GARMON.READING
+    USING (STATION_ID) INNER JOIN GARMON.COUNTRY USING (COUNTRY)
+    WHERE ELEMENT = 'TMAX'
+    AND EXTRACT(MONTH FROM DATE_TAKEN) IN (10,11,12, 1, 2,3,4)
+    AND COUNTRY IN ('IC', 'NO', 'SW', 'FI')
     GROUP BY EXTRACT(YEAR FROM DATE_TAKEN), COUNTRY
   ) INNER JOIN (
-      SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, SUM(VALUE) as "Snowfall", COUNTRY
+      SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR,
+      SUM(VALUE) as "Snowfall", COUNTRY
       FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
-      WHERE ELEMENT = 'SNOW' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (10,11,12, 1, 2,3,4) AND COUNTRY='IC'
+      INNER JOIN GARMON.COUNTRY USING (COUNTRY)
+      WHERE ELEMENT = 'SNOW' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (10,11,12, 1, 2,3,4)
+      AND COUNTRY IN ('IC', 'NO', 'SW', 'FI')
       GROUP BY EXTRACT(YEAR FROM DATE_TAKEN), COUNTRY
   ) USING (YEAR, COUNTRY) INNER JOIN (
-      SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE))*10 as "Snowdepth", COUNTRY
+      SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR,
+      ROUND(AVG(VALUE))*10 as "Snowdepth", COUNTRY
       FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
-      WHERE ELEMENT = 'SNWD' AND EXTRACT(MONTH FROM DATE_TAKEN) IN (10,11,12, 1, 2,3,4) AND COUNTRY='IC'
+      INNER JOIN GARMON.COUNTRY USING (COUNTRY)
+      WHERE ELEMENT = 'SNWD'
+      AND EXTRACT(MONTH FROM DATE_TAKEN) IN (10,11,12, 1, 2,3,4)
+      AND COUNTRY IN ('IC', 'NO', 'SW', 'FI')
       GROUP BY EXTRACT(YEAR FROM DATE_TAKEN), COUNTRY
   ) USING (YEAR, COUNTRY)`,
 
@@ -222,10 +258,7 @@ export const chartConfigs = {
   TREND5: {
     chartType: 'ScatterChart',
     chartOptions: {
-      title: 'Average wind speed of X country(s) over X years',
-      vAxis: { format: '####', title: 'Year' },
-      hAxis: { title: 'Temperature (0.1 C)' },
-      trendlines: { 0: { type: 'linear', color: 'red' } },
+      title: 'Average temperatures by season',
     },
   },
   TREND6: {
@@ -241,7 +274,7 @@ export const chartConfigs = {
     chartType: 'ScatterChart',
     chartOptions: {
       title:
-        'Correlation of Average Max Temperatures and Snowfall/Snowdepth in Iceland',
+        'Correlation of Average Max Temperatures and Snowfall/Snowdepth in Northern Europe',
       hAxis: {
         format: '####',
         title: 'Average Max Temperature (0.1 C)',
@@ -271,7 +304,7 @@ export const trendNames = [
     value: 'TREND4',
   },
   {
-    label: 'Average wind speed of X country(s) over X years',
+    label: 'Average temperatures by season',
     value: 'TREND5',
   },
   {
@@ -308,12 +341,14 @@ export const highlights = {
     'While most areas show an increase in median maximum daily temperature, some are receiving less precipitation each year, on average.',
     'The median was chosen to be more reflective of trends, and to reduce skew from outliers.',
   ],
-  TREND5: [],
+  TREND5: [
+    'This trend explores how temperatures in each season are changing globally',
+  ],
   TREND6: [],
   TREND7: [
     'This visualization shows how the trends between snowfall and snowdepth are correlated in the context of average max temperatures.',
     'As the average max temperature increases, snowfall and snowdepth decreases',
-    'This data is only representing Iceland from October - April, which is why the temperature cap is not very high in relation to other trend queries',
+    'This data is only representing Northern Europe from October - April, which is why the temperature cap is not very high in relation to other trend queries',
   ],
 };
 
