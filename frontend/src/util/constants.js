@@ -314,7 +314,7 @@ export const chartConfigs = {
       title: 'Trending Number of Snow Days',
       hAxis: { format: '####', title: 'Year' },
       vAxis: { title: 'Number of Days' },
-      // trendlines: { 0: { type: 'linear', color: 'red' } },
+      trendlines: { 0: { type: 'exponential', color: 'orange' } },
     },
   },
   TREND7: {
