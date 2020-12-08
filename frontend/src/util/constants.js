@@ -129,14 +129,14 @@ export const trendQueries = {
   FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
   INNER JOIN GARMON.COUNTRY USING (COUNTRY)
   WHERE ELEMENT='TMAX' AND EXTRACT(YEAR FROM DATE_TAKEN) > 1900 AND 
-  EXTRACT(MONTH FROM DATE_TAKEN) IN (3,4,5) AND REGION IN ('NE', 'EE')
+  EXTRACT(MONTH FROM DATE_TAKEN) IN (3,4,5) AND region != 'EE' AND region != 'NE'
   GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
   INNER JOIN
   (SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(MEDIAN(VALUE)) AS "Summer"
   FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
   INNER JOIN GARMON.COUNTRY USING (COUNTRY)
   WHERE ELEMENT='TMAX' AND EXTRACT(YEAR FROM DATE_TAKEN) > 1900 AND 
-  EXTRACT(MONTH FROM DATE_TAKEN) IN (6,7,8) AND REGION IN ('NE', 'EE')
+  EXTRACT(MONTH FROM DATE_TAKEN) IN (6,7,8) AND region != 'EE' AND region != 'NE'
   GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
   USING (YEAR)
   INNER JOIN
@@ -144,7 +144,7 @@ export const trendQueries = {
   FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
   INNER JOIN GARMON.COUNTRY USING (COUNTRY)
   WHERE ELEMENT='TMAX' AND EXTRACT(YEAR FROM DATE_TAKEN) > 1900 AND 
-  EXTRACT(MONTH FROM DATE_TAKEN) IN (9,10,11) AND REGION IN ('NE', 'EE')
+  EXTRACT(MONTH FROM DATE_TAKEN) IN (9,10,11) AND region != 'EE' AND region != 'NE'
   GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
   USING (YEAR) 
   INNER JOIN
@@ -152,7 +152,7 @@ export const trendQueries = {
   FROM GARMON.READING INNER JOIN GARMON.STATION USING (STATION_ID)
   INNER JOIN GARMON.COUNTRY USING (COUNTRY)
   WHERE ELEMENT='TMAX' AND EXTRACT(YEAR FROM DATE_TAKEN) > 1900 AND 
-  EXTRACT(MONTH FROM DATE_TAKEN) IN (12,1,2) AND REGION IN ('NE', 'EE')
+  EXTRACT(MONTH FROM DATE_TAKEN) IN (12,1,2) AND region != 'EE' AND region != 'NE'
   GROUP BY EXTRACT(YEAR FROM DATE_TAKEN))
   USING (YEAR)
   WHERE YEAR > ${yearFrom ? yearFrom : '1964'} AND YEAR < ${
@@ -160,14 +160,22 @@ export const trendQueries = {
   }
   ORDER BY YEAR ASC`,
 
-  TREND6: (
-    yearFrom,
-    yearTo
-  ) => `SELECT EXTRACT(YEAR FROM DATE_TAKEN), ROUND(AVG(VALUE), 2)
-  FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
-  WHERE ELEMENT = 'SNWD' AND EXTRACT(YEAR FROM DATE_TAKEN) > ${yearFrom} AND EXTRACT(YEAR FROM DATE_TAKEN) < ${yearTo}
-  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN)
-  ORDER BY EXTRACT(YEAR FROM DATE_TAKEN) ASC`, // TODO
+  TREND6: (yearFrom, yearTo) => `SELECT YEAR, "NumSnowDays" FROM (
+    SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE)) as "Average Temperature"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
+    WHERE ELEMENT = 'TMAX'
+    GROUP BY EXTRACT(YEAR FROM DATE_TAKEN)
+  ) INNER JOIN (
+    SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, COUNT(*) as "NumSnowDays"
+    FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
+    WHERE ELEMENT = 'SNOW' AND VALUE > 0
+    GROUP BY EXTRACT(YEAR FROM DATE_TAKEN)
+  ) USING (YEAR)
+  WHERE YEAR > ${yearFrom ? yearFrom : '1950'} AND YEAR < ${
+    yearTo ? yearTo : '2021'
+  }
+  ORDER BY YEAR ASC
+  `, // TODO
 
   TREND7: (
     yearFrom,
@@ -289,7 +297,9 @@ export const chartConfigs = {
     chartOptions: {
       title: 'Average temperatures by season',
       hAxis: { format: '####', title: 'Year' },
-      vAxis: { title: 'Average Temperature (0.1 C)' },
+      vAxis: { title: 'Temperature (0.1 C)', viewWindow: { min: 100 } },
+      pointSize: 4,
+      colors: ['blue', 'red', 'orange', 'green', 'purple', 'LightCoral'],
       trendlines: {
         0: { type: 'linear', color: 'blue' },
         1: { type: 'linear', color: 'red' },
@@ -299,12 +309,12 @@ export const chartConfigs = {
     },
   },
   TREND6: {
-    chartType: 'ScatterChart',
+    chartType: 'LineChart',
     chartOptions: {
-      title: 'BROKEN',
+      title: 'Trending Number of Snow Days',
       hAxis: { format: '####', title: 'Year' },
-      vAxis: { title: 'Temperature (0.1 C)' },
-      trendlines: { 0: { type: 'linear', color: 'red' } },
+      vAxis: { title: 'Number of Days' },
+      // trendlines: { 0: { type: 'linear', color: 'red' } },
     },
   },
   TREND7: {
@@ -327,7 +337,7 @@ export const chartConfigs = {
   TREND8: {
     chartType: 'ScatterChart',
     chartOptions: {
-      title: 'TODO',
+      title: 'Average Temperature vs. Hail Days',
       hAxis: {
         format: '####',
         title: 'Year',
@@ -360,11 +370,11 @@ export const trendNames = [
     value: 'TREND4',
   },
   {
-    label: 'Average temperatures by season',
+    label: 'Average temperatures by Season',
     value: 'TREND5',
   },
   {
-    label: 'Average snow depth of X country(s) over the years',
+    label: 'Trending Number of Snow Days',
     value: 'TREND6',
   },
   {
@@ -372,7 +382,7 @@ export const trendNames = [
     value: 'TREND7',
   },
   {
-    label: 'TODO',
+    label: 'Average Temperature vs. Hail Days',
     value: 'TREND8',
   },
 ];
@@ -405,13 +415,19 @@ export const highlights = {
     'This trend explores how temperatures in each season are changing globally',
     'Since 1965, temperatures across the world and in all seasons have been on an upwards trend (getting warming)',
   ],
-  TREND6: [],
+  TREND6: [
+    'This visualization shows the trend of snow days since 1950',
+    'There is an overall downward trend (fewer snow days), and a rather extensive spike from the mid 50s through the 60s',
+  ],
   TREND7: [
     'This visualization shows how the trends between snowfall and snowdepth are correlated in the context of average max temperatures.',
     'As the average max temperature increases, snowfall and snowdepth decreases',
     'This data is only representing Northern Europe from October - April, which is why the temperature cap is not very high in relation to other trend queries',
   ],
-  TREND8: [],
+  TREND8: [
+    'This shows an interesting trend set between the average temperature and hail days (per year)',
+    'We believe this to be an inconsistent trend, and perhaps if we had more storage in the database the additional data would revive this query',
+  ],
 };
 
 export const trendDateRanges = {
@@ -419,6 +435,6 @@ export const trendDateRanges = {
   TREND3: [moment('1964', 'YYYY'), moment('2021', 'YYYY')],
   TREND4: [moment('1770', 'YYYY'), moment('2021', 'YYYY')],
   TREND5: [moment('1964', 'YYYY'), moment('2021', 'YYYY')],
-  TREND6: [moment('1964', 'YYYY'), moment('2021', 'YYYY')],
+  TREND6: [moment('1950', 'YYYY'), moment('2021', 'YYYY')],
   TREND7: [moment('1964', 'YYYY'), moment('2021', 'YYYY')],
 };
