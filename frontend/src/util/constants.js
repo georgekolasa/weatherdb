@@ -165,7 +165,7 @@ export const trendQueries = {
     yearTo
   ) => `SELECT EXTRACT(YEAR FROM DATE_TAKEN), ROUND(AVG(VALUE), 2)
   FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
-  WHERE ELEMENT = 'SNWD' AND YEAR > ${yearFrom} AND YEAR > ${yearTo}
+  WHERE ELEMENT = 'SNWD' AND EXTRACT(YEAR FROM DATE_TAKEN) > ${yearFrom} AND EXTRACT(YEAR FROM DATE_TAKEN) < ${yearTo}
   GROUP BY EXTRACT(YEAR FROM DATE_TAKEN)
   ORDER BY EXTRACT(YEAR FROM DATE_TAKEN) ASC`, // TODO
 
@@ -203,14 +203,19 @@ export const trendQueries = {
     yearTo ? yearTo : '2021'
   }`,
 
-  TREND7_OLD: (yearFrom, yearTo) => `SELECT * FROM 
-  (SELECT EXTRACT(YEAR FROM DATE_TAKEN) "Year", AVG(VALUE) "Temperature"
-  FROM GARMON.STATION JOIN GARMON.READING ON GARMON.READING.STATION_ID = GARMON.STATION.STATION_ID
-  WHERE ELEMENT = 'TMAX' 
-  AND EXTRACT(MONTH FROM DATE_TAKEN) >= '01' AND EXTRACT(MONTH FROM DATE_TAKEN) <= '03' 
-  AND EXTRACT(YEAR FROM DATE_TAKEN) <= '2020' AND EXTRACT(YEAR FROM DATE_TAKEN) >= '2015' 
-  GROUP BY EXTRACT(YEAR FROM DATE_TAKEN)
-  ORDER BY EXTRACT(YEAR FROM DATE_TAKEN))`, // BROKEN
+  TREND8: (yearFrom, yearTo) =>
+    `SELECT * FROM (
+      SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, ROUND(AVG(VALUE)) as "Average Temperature"
+      FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
+      WHERE ELEMENT = 'TMAX'
+      GROUP BY EXTRACT(YEAR FROM DATE_TAKEN)
+    ) INNER JOIN (
+      SELECT EXTRACT(YEAR FROM DATE_TAKEN) AS YEAR, SUM(VALUE) as "Average Hail"
+      FROM GARMON.STATION INNER JOIN GARMON.READING USING (STATION_ID)
+      WHERE ELEMENT = 'WT05'
+      GROUP BY EXTRACT(YEAR FROM DATE_TAKEN)
+    ) USING (YEAR)
+    ORDER BY YEAR ASC`,
 };
 
 // TODO: alter me to take in params and return an object instead (see above)
@@ -283,12 +288,20 @@ export const chartConfigs = {
     chartType: 'ScatterChart',
     chartOptions: {
       title: 'Average temperatures by season',
+      hAxis: { format: '####', title: 'Year' },
+      vAxis: { title: 'Average Temperature (0.1 C)' },
+      trendlines: {
+        0: { type: 'linear', color: 'blue' },
+        1: { type: 'linear', color: 'red' },
+        2: { type: 'linear', color: 'orange' },
+        3: { type: 'linear', color: 'green' },
+      },
     },
   },
   TREND6: {
     chartType: 'ScatterChart',
     chartOptions: {
-      title: 'Average snow depth of X country(s) over the years',
+      title: 'BROKEN',
       hAxis: { format: '####', title: 'Year' },
       vAxis: { title: 'Temperature (0.1 C)' },
       trendlines: { 0: { type: 'linear', color: 'red' } },
@@ -309,6 +322,25 @@ export const chartConfigs = {
         0: { type: 'linear', color: 'blue' },
         1: { type: 'linear', color: 'red' },
       },
+    },
+  },
+  TREND8: {
+    chartType: 'ScatterChart',
+    chartOptions: {
+      title: 'TODO',
+      hAxis: {
+        format: '####',
+        title: 'Year',
+        viewWindow: { min: 1964 },
+      },
+      vAxis: {
+        title: 'Average Max Temperature (0.1 C) / Hail Days',
+        viewWindow: { max: 300 },
+      },
+      // trendlines: {
+      //   0: { type: 'linear', color: 'blue' },
+      //   1: { type: 'linear', color: 'red' },
+      // },
     },
   },
 };
@@ -339,6 +371,10 @@ export const trendNames = [
     label: 'Average Max Temperatures and Snowfall/Snowdepth',
     value: 'TREND7',
   },
+  {
+    label: 'TODO',
+    value: 'TREND8',
+  },
 ];
 
 export const highlights = {
@@ -367,6 +403,7 @@ export const highlights = {
   ],
   TREND5: [
     'This trend explores how temperatures in each season are changing globally',
+    'Since 1965, temperatures across the world and in all seasons have been on an upwards trend (getting warming)',
   ],
   TREND6: [],
   TREND7: [
@@ -374,6 +411,7 @@ export const highlights = {
     'As the average max temperature increases, snowfall and snowdepth decreases',
     'This data is only representing Northern Europe from October - April, which is why the temperature cap is not very high in relation to other trend queries',
   ],
+  TREND8: [],
 };
 
 export const trendDateRanges = {

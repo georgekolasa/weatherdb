@@ -70,7 +70,7 @@ export default function QueryForm() {
     setSelected(trendName);
   }
   function showQuery() {
-    if (!selected || !dateRange) {
+    if (!selected || (!dateRange && selected !== 'TREND2')) {
       return;
     }
 
